@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="onlyPolishHead">
+    <meta charset="UTF-8">
+    <title>OnlyPolish</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <link rel="stylesheet" type="text/css"
+          href="/webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+</head>
+
+<body>
+<!-- jQuery CDN - Slim version (=without AJAX) -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<!-- Popper.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+
+
+<div class="navbar navbar-fixed-top navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#" style="color:#fff; background: #6d77ff;">Tu będzie nasze logo</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li>
+                    <form class="form-inline">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                        <input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search" aria-label="Search">
+                    </form>
+                </li>
+                <li class="sk"><a href="#">Załóż konto</a></li>
+                <li class="sk"><a href="#">Zaloguj</a></li>
+                <li class="sk"><a href="#">Ulubione</a></li>
+                <li class="sk"><a href="#">Koszyk</a></li>
+            </ul>
+        </div>
+        <!-- /.nav-collapse -->
+    </div>
+    <!-- /.container -->
+</div>
+<!-- /.navbar -->
+
+<!--/*@thymesVar id="flashMessageManager" type="onlypolish.flashmessage.FlashMessageManager"*/-->
+<th:block th:if="${flashMessageManager != null && flashMessageManager.issetMessage()}">
+    <div id="message">
+        <div style="padding: 5px;" th:with="flashMessage=${flashMessageManager.getFlashMessage()}" >
+            <div class="alert alert-dismissible" th:classappend="${flashMessage.type.toBootstrapClass()}" role="alert" >
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <p th:text="${flashMessage.message}"></p>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<div class="container-fluid">
+    <div class="row row-offcanvas row-offcanvas-left">
+        <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
+            <div class="sidebar-nav">
+                <ul class="nav">
+                    <li><a href="#">Kategorie</a></li>
+                    <li><a href="#">Kategoria1</a></li>
+                    <li><a href="#">Kategoria2</a></li>
+                    <li><a href="#">Kategoria3</a></li>
+                    <li><a href="#">Kategoria4</a></li>
+                    <li><a href="#">Kategoria5</a></li>
+                    <li><a href="#">Kategoria6</a></li>
+                    <li><a href="#">Kategoria7</a></li>
+                </ul>
+            </div>
+            <!--/.well -->
+        </div>
+        <!--/span-->
+
+        <div class="col-xs-12 col-sm-9">
+            <center>
+                <div id="main_containter" class="container">
+                    <div class="alert alert-light" role="alert">
+                        <form method="post">
+                            <h3>Zaloguj się!</h3>
+                            <div class="form-horizontal">
+                                <label for="inputLogin">Login</label>
+                                <input type="text" class="form-control login" id="inputLogin" aria-describedby="loginHelp" name="login" placeholder="Wpisz login" size="60">
+                            </div><br>
+                            <div class="form-horizontal">
+                                <label for="inputPassword">Hasło</label>
+                                <input type="password" class="form-control login" id="inputPassword" name="password" placeholder="Wpisz hasło" size="60">
+                            </div><br>
+                            <button type="submit" class="btn btn-primary" style="margin-left: 15px;">Zaloguj</button><br><br>
+                        </form>
+                        <a href="#" class="taki-sobie-link">Nie masz jeszcze konta? Zarejestruj się!</a><br>
+                        <a href="#" class="taki-sobie-link">Zapomniałeś hasła?</a>
+                    </div>
+                </div>
+            </center>
+        </div>
+        <!--/span-->
+
+
+    </div>
+    <!--/row-->
+
+    <footer class="footer">
+        <div class="container text-light">
+            <p>Tu będzie nazwa naszej firmy<br>All rights reserved</p>
+        </div>
+        <script type="text/javascript" src="/webjars/jquery/3.1.0/jquery.min.js"></script>
+        <script type="text/javascript" src="/webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    </footer>
+
+</div>
+<!--/.container-->
+
+
+
+
+</body>
+<script>
+    $(document).ready(function() {
+        $('[data-toggle=offcanvas]').click(function() {
+            $('.row-offcanvas').toggleClass('active');
+        });
+    });
+
+    function goToAdminPanel() {
+        login = document.getElementById("inputLogin").value;
+        console.log(login);
+        password = document.getElementById("inputPassword").value;
+        console.log(password);
+        if(login == "admin" && password == "admin"){
+            window.location.pathname = "adminPage";
+        }
+    }
+</script>
+</html>

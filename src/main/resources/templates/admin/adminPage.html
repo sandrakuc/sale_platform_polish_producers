@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="onlyPolishHead">
+    <meta charset="UTF-8">
+    <title>OnlyPolish</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <link rel="stylesheet" type="text/css"
+          href="/webjars/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js"
+            integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ"
+            crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js"
+            integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY"
+            crossorigin="anonymous"></script>
+</head>
+
+<body style="padding-top: 0px">
+<!-- jQuery CDN - Slim version (=without AJAX) -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<!-- Popper.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        crossorigin="anonymous"></script>
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        crossorigin="anonymous"></script>
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid" style="background:  #6d7fbb;">
+        <ul class="nav navbar-nav" style="float: left; background:  #6d7fbb;">
+            <li><a href="adminPage">Użytkownicy</a></li>
+            <li><a href="adminViewApplicationForms">Zgłoszenia</a></li>
+            <li><a href="adminViewSecurityAlert">Alerty bezpieczeństwa</a></li>
+            <li><a href="adminViewBugReport">Powiadomienia o błędach</a></li>
+            <li><a href="adminViewEditStatute">Zarządzaj regulaminem</a></li>
+            <li><a href="#">Zarządzaj aktualnościami</a><!--todo: build in future-->
+            </li><li><a href="logout">Wyloguj</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!--/*@thymesVar id="flashMessageManager" type="onlypolish.flashmessage.FlashMessageManager"*/-->
+<th:block th:if="${flashMessageManager != null && flashMessageManager.issetMessage()}">
+    <div id="message">
+        <div style="padding: 5px;" th:with="flashMessage=${flashMessageManager.getFlashMessage()}" >
+            <div class="alert alert-dismissible" th:classappend="${flashMessage.type.toBootstrapClass()}" role="alert" >
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <p th:text="${flashMessage.message}"></p>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+
+    <div class="form-inline">
+        <form method="get" action="search" class="form-inline" style="width: 900px;">
+            <i class="fas fa-search" aria-hidden="true"></i>
+            <input name="substring" class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search" aria-label="Search">
+            <button class="btn btn-primary" type="submit">WYSZUKAJ</button>
+        </form>
+    </div>
+
+<div class="col-xs-12 col-sm-9">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Login</th>
+            <th>Email</th>
+            <th>Imię</th>
+            <th>Nazwisko</th>
+            <th>Uprawnienia</th>
+            <th>Zapisz</th>
+            <th>Usuń</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user :${users}">
+            <td th:text="${user.getId()}"></td>
+            <td th:text="${user.getLogin()}"></td>
+            <td th:text="${user.getEmail()}"></td>
+            <td th:text="${user.getName()}"></td>
+            <td th:text="${user.getSurname()}"></td>
+            <form method="get" action="saveAccountChanges">
+            <td><select id="perm1" class="form-control" name="perms">
+                <option th:selected="${user.isSeller()}" value="SELLER">SPRZEDAJĄCY</option>
+                <option th:selected="${user.isClient()}" value="CLIENT">KUPUJĄCY</option>
+            </select></td>
+            <td>
+                <input type="hidden" name="userId" th:value="${user.getId()}" />
+                <button class="btn btn-primary" type="submit">ZAPISZ</button>
+            </td></form>
+            <td><form method="get" action="deleteAccount">
+                <input type="hidden" name="userId" th:value="${user.getId()}" />
+                <button class="btn btn-primary" type="submit">USUŃ</button>
+            </form></td>
+        </tr>
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Utwórz nowego użytkownika</button>
+    <!-- todo: build in future-->
+</div>
+
+<footer class="footer">
+    <div class="container text-light">
+        <p>Tu będzie nazwa naszej firmy<br>All rights reserved</p>
+    </div>
+    <script type="text/javascript" src="/webjars/jquery/3.1.0/jquery.min.js"></script>
+    <script type="text/javascript" src="/webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</footer>
+
+<!--/.container-->
+
+
+</body>
+<script>
+    $(document).ready(function () {
+        $('[data-toggle=offcanvas]').click(function () {
+            $('.row-offcanvas').toggleClass('active');
+        });
+    });
+</script>
+</html>

@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="onlyPolishHead">
+    <meta charset="UTF-8">
+    <title>OnlyPolish</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <link rel="stylesheet" type="text/css"
+          href="/webjars/bootstrap/3.3.7/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js"
+            integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ"
+            crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js"
+            integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY"
+            crossorigin="anonymous"></script>
+</head>
+
+<style>
+
+    .table.table-borderless > tbody > tr > td,
+    .table.table-borderless > tbody > tr > th,
+    .table.table-borderless > tfoot > tr > td,
+    .table.table-borderless > tfoot > tr > th,
+    .table.table-borderless > thead > tr > td,
+    .table.table-borderless > thead > tr > th {
+        border-top: none;
+    }
+
+    .applicationForm{
+        padding: 30px;
+        margin: 30px;
+        background-color: rgb(238, 238, 238);
+    }
+
+</style>
+
+<body style="padding-top: 0px">
+<!-- jQuery CDN - Slim version (=without AJAX) -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<!-- Popper.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        crossorigin="anonymous"></script>
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        crossorigin="anonymous"></script>
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid" style="background:  #6d7fbb;">
+        <ul class="nav navbar-nav" style="float: left; background:  #6d7fbb;">
+            <li><a href="adminPage">Użytkownicy</a></li>
+            <li><a href="adminViewApplicationForms">Zgłoszenia</a></li>
+            <li><a href="adminViewSecurityAlert">Alerty bezpieczeństwa</a></li>
+            <li><a href="adminViewBugReport">Powiadomienia o błędach</a></li>
+            <li><a href="adminViewEditStatute">Zarządzaj regulaminem</a></li>
+            <li><a href="#">Zarządzaj aktualnościami</a><!--todo: build in future-->
+            </li><li><a href="logout">Wyloguj</a></li>
+        </ul>
+    </div>
+</nav>
+
+
+<br>
+<br>
+<!--/*@thymesVar id="flashMessageManager" type="onlypolish.flashmessage.FlashMessageManager"*/-->
+<th:block th:if="${flashMessageManager != null && flashMessageManager.issetMessage()}">
+    <div id="message">
+        <div style="padding: 5px;" th:with="flashMessage=${flashMessageManager.getFlashMessage()}" >
+            <div class="alert alert-dismissible" th:classappend="${flashMessage.type.toBootstrapClass()}" role="alert" >
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <p th:text="${flashMessage.message}"></p>
+            </div>
+        </div>
+    </div>
+</th:block>
+
+<div class="col-xs-12 col-sm-9">
+    <form method="get" action="addNews">
+        <button type="submit" class="btn btn-primary" style="float:right;margin:8px">Dodaj newsa</button>
+    </form>
+    <h2>Aktualności</h2>
+    <div class="applicationForm">
+        <span style="float:right;">01-03-2019 13:45</span>
+        <h3>Okazje na dzień kobiet!</h3>
+        <img src="main.jpg" width="1255" height="800" ><br><br>
+        <p>
+            Cupcake ipsum dolor sit amet jujubes macaroon biscuit muffin. I love muffin cake. Toffee cake soufflé sweet caramels pudding chocolate bar cake soufflé. Toffee tootsie roll toffee. Bear claw lemon drops chupa chups gingerbread carrot cake. Cotton candy halvah apple pie chocolate cake ice cream fruitcake bear claw. Pastry liquorice bear claw chocolate cake I love ice cream biscuit pudding. Cookie chocolate bar bonbon. Chocolate cake cake chocolate jelly powder I love cotton candy ice cream. Dragée I love chocolate bar caramels caramels pudding cheesecake. Dessert croissant topping brownie I love gingerbread. Dragée bear claw cheesecake chupa chups pudding. Wafer powder halvah chocolate pie lemon drops jujubes. Gummi bears oat cake croissant dessert bonbon I love marzipan fruitcake wafer.</br>
+        </p>
+        <form method="get" action="deleteNews">
+            <button type="submit" class="btn btn-primary" style="float:right;margin:8px">Usuń</button>
+        </form>
+        <form method="get" action="addNews">
+            <button type="submit" class="btn btn-primary" style="float:right;margin:8px">Edytuj</button>
+        </form>
+        </br>
+        </br>
+    </div>
+    <br>
+    <br>
+    <div class="applicationForm">
+        <span style="float:right;">29-11-2018 13:45</span>
+        <h3>Świąteczny zawrót głowy!</h3>
+        <img src="main2.jpg" width="1255" height="800" ><br><br>
+        <p>
+            Cupcake ipsum dolor sit amet jujubes macaroon biscuit muffin. I love muffin cake. Toffee cake soufflé sweet caramels pudding chocolate bar cake soufflé. Toffee tootsie roll toffee. Bear claw lemon drops chupa chups gingerbread carrot cake. Cotton candy halvah apple pie chocolate cake ice cream fruitcake bear claw. Pastry liquorice bear claw chocolate cake I love ice cream biscuit pudding. Cookie chocolate bar bonbon. Chocolate cake cake chocolate jelly powder I love cotton candy ice cream. Dragée I love chocolate bar caramels caramels pudding cheesecake. Dessert croissant topping brownie I love gingerbread. Dragée bear claw cheesecake chupa chups pudding. Wafer powder halvah chocolate pie lemon drops jujubes. Gummi bears oat cake croissant dessert bonbon I love marzipan fruitcake wafer.</br>
+        </p>
+        <form method="get" action="deleteNews">
+            <button type="submit" class="btn btn-primary" style="float:right;margin:8px">Usuń</button>
+        </form>
+        <form method="get" action="editStatute">
+            <button type="submit" class="btn btn-primary" style="float:right;margin:8px">Edytuj</button>
+        </form>
+        </br>
+        </br>
+    </div>
+    <br>
+    <br>
+</div>
+
+<footer class="footer">
+    <div class="container text-light">
+        <p>Tu będzie nazwa naszej firmy<br>All rights reserved</p>
+    </div>
+    <script type="text/javascript" src="/webjars/jquery/3.1.0/jquery.min.js"></script>
+    <script type="text/javascript" src="/webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</footer>
+
+<!--/.container-->
+
+
+</body>
+<script>
+    $(document).ready(function () {
+        $('[data-toggle=offcanvas]').click(function () {
+            $('.row-offcanvas').toggleClass('active');
+        });
+    });
+</script>
+</html>

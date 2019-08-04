@@ -1,0 +1,172 @@
+@import url("https://bootswatch.com/flatly/bootstrap.min.css");
+
+body {
+    padding-top: 0px;
+}
+footer {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+@media screen and (max-width: 768px) {
+    .row-offcanvas {
+        position: relative;
+        -webkit-transition: all 0.25s ease-out;
+        -moz-transition: all 0.25s ease-out;
+        transition: all 0.25s ease-out;
+        /*background:#ecf0f1;*/
+    }
+
+    .row-offcanvas-left
+    .sidebar-offcanvas {
+        left: -40%;
+    }
+
+    .row-offcanvas-left.active {
+        left: 40%;
+    }
+
+    .sidebar-offcanvas {
+        position: absolute;
+        top: 0;
+        width: 40%;
+        margin-left: 12px;
+    }
+}
+
+#sidebar {
+    padding:15px;
+    width: 20%;
+    background: #6d7fbb;
+}
+
+#sidebar a{
+    background: #6d7fbb;
+    color: #eeeeee;
+}
+
+.form-inline{
+    padding: 15px;
+    width: 550px;
+}
+
+.form.form-inline{
+    width: 550px;
+}
+
+.navbar-brand{
+    background: #6d77ff;
+    width: 354px;
+    color: #fff;
+}
+
+.navbar-default .navbar-brand{
+     color: #fff;
+     background: #6d77ff;
+ }
+
+.navbar-default .navbar-brand a{
+    color: #fff;
+    background: #6d77ff;
+    height: 100%;
+}
+.navbar-default .navbar-brand a:focus{
+    color: #fff;
+    background: #6d77ff;
+    height: 100%;
+}
+
+.navbar-brand a{
+    background: #6d77ff;
+    color: #fff;
+}
+
+.navbar-header a{
+    background: #6d77ff;
+    color: #fff;
+    height: 64px;
+    padding: 20px;
+}
+
+
+
+.collapse.navbar-collapse{
+    height: 50px;
+    background: #6d7fbb;
+    color: #eeeeee;
+    width:1398px;
+    float:right;
+}
+
+
+.col-xs-12.col-sm-9{
+    width:80%;
+    height: 1000px;
+}
+
+.nav.navbar-nav{
+    width:1700px;
+    color: #eeeeee;
+    float: left;
+    background: #6d7fbb;
+}
+
+.form-control.form-control-sm.ml-3.w-75{
+    width: 485px;
+}
+
+.sk{
+    padding: 5px;
+    float:right;
+    color: #ffffff;
+}
+
+.sk a{
+    color: #eeeeee;
+}
+
+a{
+    color: #eeeeee;
+}
+
+.navbar-default .navbar-nav > li > a {
+    color: #eeeeee;
+    float:right;
+}
+
+.footer{
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    background-color: #6d77ff;
+    color: whitesmoke;
+    width: 100%;
+    text-align: left;
+    font-weight: bold;
+}
+
+.form-control.login{
+    width: 300px;
+    margin: 0;
+}
+
+.taki-sobie-link{
+    text-decoration: none;
+    font-weight: bold;
+    color: rgb(95,80,195);
+}
+
+.table.table-borderless > tbody > tr > td,
+.table.table-borderless > tbody > tr > th,
+.table.table-borderless > tfoot > tr > td,
+.table.table-borderless > tfoot > tr > th,
+.table.table-borderless > thead > tr > td,
+.table.table-borderless > thead > tr > th {
+    border-top: none;
+}
+
+.applicationForm{
+    padding: 30px;
+    margin: 30px;
+    background-color: rgb(150,150,225);
+}

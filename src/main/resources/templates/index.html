@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment="onlyPolishHead">
+    <meta charset="UTF-8">
+    <title>OnlyPolish</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <link rel="stylesheet" type="text/css"
+          href="/webjars/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" type="text/css" href="style.css">
+
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+</head>
+
+<body>
+<!-- jQuery CDN - Slim version (=without AJAX) -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<!-- Popper.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+
+
+<div class="navbar navbar-fixed-top navbar-default" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#" style="color:#fff; background: #6d77ff;">Tu będzie nasze logo</a>
+        </div>
+        <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li>
+                    <form class="form-inline">
+                        <i class="fas fa-search" aria-hidden="true"></i>
+                        <input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search" aria-label="Search">
+                    </form>
+                </li>
+                <li class="sk"><a href="#">Załóż konto</a></li>
+                <li class="sk"><a href="login">Zaloguj</a></li>
+                <li class="sk"><a href="#">Ulubione</a></li>
+                <li class="sk"><a href="#">Koszyk</a></li>
+            </ul>
+        </div>
+        <!-- /.nav-collapse -->
+    </div>
+    <!-- /.container -->
+</div>
+<!-- /.navbar -->
+<div class="container-fluid">
+    <div class="row row-offcanvas row-offcanvas-left">
+        <div class="col-xs-6 col-sm-3 sidebar-offcanvas" id="sidebar" role="navigation">
+            <div class="sidebar-nav">
+                <ul class="nav">
+                    <li><a href="#">Kategorie</a></li>
+                    <li><a href="#">Kategoria1</a></li>
+                    <li><a href="#">Kategoria2</a></li>
+                    <li><a href="#">Kategoria3</a></li>
+                    <li><a href="#">Kategoria4</a></li>
+                    <li><a href="#">Kategoria5</a></li>
+                    <li><a href="#">Kategoria6</a></li>
+                    <li><a href="#">Kategoria7</a></li>
+                </ul>
+            </div>
+            <!--/.well -->
+        </div>
+        <!--/span-->
+
+        <div class="col-xs-12 col-sm-9">
+            <br>
+            <div class="jumbotron" style="padding: 30px 0px 30px 0px;">
+                <a href="#" class="visible-xs" data-toggle="offcanvas"><i class="fa fa-lg fa-reorder"></i></a>
+                <h2>Okazje na Dzień kobiet!</h2>
+                <img src="main.jpg" width="1385" height="800" >
+                <p>Lorem ipsum dolor sit amet...</p>
+                <p><a class="btn btn-default" href="#">Czytaj więcej »</a></p>
+            </div>
+            <div class="row">
+                <div class="col-6 col-sm-6 col-lg-4">
+                    <h2>Super okazja!</h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusantium ad asperiores aspernatur beatae dolorem, dolores, esse et exercitationem id ipsa magni molestiae officia perferendis perspiciatis quisquam quod sequi similique soluta?</p>
+                    <img src="1.jpg" width="100" height="200">
+                    <p><a class="btn btn-default" href="#">Zobacz! »</a></p>
+                </div>
+                <!--/span-->
+                <div class="col-6 col-sm-6 col-lg-4">
+                    <h2>Hit!</h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A dolore illo laboriosam nesciunt quam, quod repudiandae sunt vel. Ex explicabo fugiat illo impedit quibusdam repellat reprehenderit repudiandae sequi tempore voluptatem.</p>
+                    <img src="2.jpg" width="100" height="200">
+                    <p><a class="btn btn-default" href="#">Zobacz! »</a></p>
+                </div>
+                <!--/span-->
+
+                <div class="col-6 col-sm-6 col-lg-4">
+                    <h2>Wybrane dla Ciebie!</h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A dolore illo laboriosam nesciunt quam, quod repudiandae sunt vel. Ex explicabo fugiat illo impedit quibusdam repellat reprehenderit repudiandae sequi tempore voluptatem.</p>
+                    <img src="3.jpg" width="100" height="200">
+                    <p><a class="btn btn-default" href="#">Zobacz! »</a></p>
+                </div>
+                <!--/span-->
+                <div class="col-6 col-sm-6 col-lg-4">
+                    <h2>Ostatnio przeglądane</h2>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A dolore illo laboriosam nesciunt quam, quod repudiandae sunt vel. Ex explicabo fugiat illo impedit quibusdam repellat reprehenderit repudiandae sequi tempore voluptatem.</p>
+                    <img src="4.jpg" width="200" height="100">
+                    <p><a class="btn btn-default" href="#">Zobacz! »</a></p>
+                    <br>
+                    <br>
+                    <br>
+                </div>
+                <!--/span-->
+            </div>
+            <!--/row-->
+        </div>
+        <!--/span-->
+
+
+    </div>
+    <!--/row-->
+
+    <footer class="footer">
+        <div class="container text-light">
+            <p>Tu będzie nazwa naszej firmy<br>All rights reserved</p>
+        </div>
+        <script type="text/javascript" src="/webjars/jquery/3.1.0/jquery.min.js"></script>
+        <script type="text/javascript" src="/webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    </footer>
+
+</div>
+<!--/.container-->
+
+
+
+
+</body>
+<script>
+    $(document).ready(function() {
+        $('[data-toggle=offcanvas]').click(function() {
+            $('.row-offcanvas').toggleClass('active');
+        });
+    });
+</script>
+</html>
