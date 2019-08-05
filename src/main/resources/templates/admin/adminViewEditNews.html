@@ -58,7 +58,7 @@
             <li><a href="adminViewSecurityAlert">Alerty bezpieczeństwa</a></li>
             <li><a href="adminViewBugReport">Powiadomienia o błędach</a></li>
             <li><a href="adminViewEditStatute">Zarządzaj regulaminem</a></li>
-            <li><a href="#">Zarządzaj aktualnościami</a><!--todo: build in future-->
+            <li><a href="adminViewEditNews">Zarządzaj aktualnościami</a><!--todo: build in future-->
             </li><li><a href="logout">Wyloguj</a></li>
         </ul>
     </div>
@@ -84,35 +84,18 @@
         <button type="submit" class="btn btn-primary" style="float:right;margin:8px">Dodaj newsa</button>
     </form>
     <h2>Aktualności</h2>
-    <div class="applicationForm">
-        <span style="float:right;">01-03-2019 13:45</span>
-        <h3>Okazje na dzień kobiet!</h3>
-        <img src="main.jpg" width="1255" height="800" ><br><br>
-        <p>
-            Cupcake ipsum dolor sit amet jujubes macaroon biscuit muffin. I love muffin cake. Toffee cake soufflé sweet caramels pudding chocolate bar cake soufflé. Toffee tootsie roll toffee. Bear claw lemon drops chupa chups gingerbread carrot cake. Cotton candy halvah apple pie chocolate cake ice cream fruitcake bear claw. Pastry liquorice bear claw chocolate cake I love ice cream biscuit pudding. Cookie chocolate bar bonbon. Chocolate cake cake chocolate jelly powder I love cotton candy ice cream. Dragée I love chocolate bar caramels caramels pudding cheesecake. Dessert croissant topping brownie I love gingerbread. Dragée bear claw cheesecake chupa chups pudding. Wafer powder halvah chocolate pie lemon drops jujubes. Gummi bears oat cake croissant dessert bonbon I love marzipan fruitcake wafer.</br>
+    <div th:each="n: ${newsAndContents}" class="applicationForm">
+        <span style="float:right;" th:text="${n.getNews().getDate()}"></span>
+        <h3 th:text="${n.getNews().getTitle()}"></h3>
+        <img th:src="${n.getNews().getImgPath()}" width="1255" height="800" ><br><br>
+        <p th:text="${n.getContent()}">
         </p>
         <form method="get" action="deleteNews">
+            <input type="hidden" name="newsId" th:value="${n.getNews().getId()}" />
             <button type="submit" class="btn btn-primary" style="float:right;margin:8px">Usuń</button>
         </form>
-        <form method="get" action="addNews">
-            <button type="submit" class="btn btn-primary" style="float:right;margin:8px">Edytuj</button>
-        </form>
-        </br>
-        </br>
-    </div>
-    <br>
-    <br>
-    <div class="applicationForm">
-        <span style="float:right;">29-11-2018 13:45</span>
-        <h3>Świąteczny zawrót głowy!</h3>
-        <img src="main2.jpg" width="1255" height="800" ><br><br>
-        <p>
-            Cupcake ipsum dolor sit amet jujubes macaroon biscuit muffin. I love muffin cake. Toffee cake soufflé sweet caramels pudding chocolate bar cake soufflé. Toffee tootsie roll toffee. Bear claw lemon drops chupa chups gingerbread carrot cake. Cotton candy halvah apple pie chocolate cake ice cream fruitcake bear claw. Pastry liquorice bear claw chocolate cake I love ice cream biscuit pudding. Cookie chocolate bar bonbon. Chocolate cake cake chocolate jelly powder I love cotton candy ice cream. Dragée I love chocolate bar caramels caramels pudding cheesecake. Dessert croissant topping brownie I love gingerbread. Dragée bear claw cheesecake chupa chups pudding. Wafer powder halvah chocolate pie lemon drops jujubes. Gummi bears oat cake croissant dessert bonbon I love marzipan fruitcake wafer.</br>
-        </p>
-        <form method="get" action="deleteNews">
-            <button type="submit" class="btn btn-primary" style="float:right;margin:8px">Usuń</button>
-        </form>
-        <form method="get" action="editStatute">
+        <form method="get" action="editNews">
+            <input type="hidden" name="newsId" th:value="${n.getNews().getId()}" />
             <button type="submit" class="btn btn-primary" style="float:right;margin:8px">Edytuj</button>
         </form>
         </br>

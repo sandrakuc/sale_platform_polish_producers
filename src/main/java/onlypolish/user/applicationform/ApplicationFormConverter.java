@@ -40,7 +40,7 @@ public enum ApplicationFormConverter {
                 .city(applicationForm.getCity())
                 .phoneNumber(applicationForm.getPhoneNumber())
                 .email(applicationForm.getEmail())
-                .login(creteUserLogin(creteUserLogin(applicationForm.getShopName())))
+                .login(creteUserLogin(applicationForm.getShopName()))
                 .password(generatePassword())
                 .permissions(Permissions.SELLER)
                 .build();

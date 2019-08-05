@@ -3,8 +3,13 @@ package onlypolish.admin;
 import onlypolish.bugraport.BugRaport;
 import onlypolish.bugraport.BugRaportRepo;
 import onlypolish.bugraport.RaportStatus;
+import onlypolish.dashboard.news.News;
+import onlypolish.dashboard.news.NewsAndContent;
+import onlypolish.dashboard.news.NewsAndContentOperations;
+import onlypolish.dashboard.news.NewsRepo;
 import onlypolish.flashmessage.FlashMessageManager;
 import onlypolish.flashmessage.MessagesContents;
+import onlypolish.imagestore.ImageStoreService;
 import onlypolish.securityalert.AlertStatus;
 import onlypolish.securityalert.SecurityAlert;
 import onlypolish.securityalert.SecurityAlertRepo;
@@ -17,11 +22,16 @@ import onlypolish.user.applicationform.ApplicationForm;
 import onlypolish.user.applicationform.ApplicationFormConverter;
 import onlypolish.user.applicationform.ApplicationFormRepo;
 import onlypolish.user.applicationform.FormStatus;
+import org.hibernate.mapping.Collection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import static onlypolish.flashmessage.FlashMessageManager.FlashMessage.Type.INFO;
 
@@ -29,6 +39,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.*;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -53,6 +65,12 @@ public class AdminController {
     @Autowired
     BugRaportRepo bugRaportRepo;
 
+    @Autowired
+    NewsRepo newsRepo;
+
+    @Autowired
+    ResourceLoader resourceLoader;
+
     private static final String USERS = "users";
     private static final String PERMISSIONS = "perms";
     private static final String SELLER = "SELLER";
@@ -67,8 +85,29 @@ public class AdminController {
     private static final String FLASH_MESSAGE_MANAGER = "flashMessageManager";
     private static final String STATUTE_CONTENT = "statuteContent";
     private static final String STATUTE_CONTENT_VALUE = "statuteContentValue";
+    private static final String NEWS_AND_CONTENTS = "newsAndContents";
+    private static final String NEWS_AND_CONTENT = "newsAndContent";
+    private static final String NEWS_ID = "newsId";
+    private static final String NEWS_TITLE = "title";
+    private static final String NEWS_CONTENT = "content";
+    private static final String FILE = "file";
 
-    List<BugRaport> getNotRepairedBugRaports(List<BugRaport> bugRaports){
+    private boolean isNewsNull(News news){
+        return news == null;
+    }
+
+    private News buildNews(News news, String title, String imgPath, String newsContent) throws FileNotFoundException {
+        Date date = new Date();
+        news.setTitle(title);
+        news.setDate(date);
+        news.setImgPath(imgPath);
+        String fileName = NewsAndContentOperations.INSTANCE.generateFileName(date);
+        NewsAndContentOperations.INSTANCE.writeNewsContent(newsContent, fileName);
+        news.setContentPath(fileName);
+        return news;
+    }
+
+    private List<BugRaport> getNotRepairedBugRaports(List<BugRaport> bugRaports){
         List<BugRaport> notRepairedBugRaports = bugRaports.stream()
                 .filter(bugRaport -> !bugRaport.isRepaired())
                 .collect(Collectors.toList());
@@ -171,8 +210,11 @@ public class AdminController {
     }
 
     @RequestMapping("adminViewEditNews")
-    public String goToAdminViewEditNews(HttpServletRequest request, Model model){
-        //todo: build in future
+    public String goToAdminViewEditNews(HttpServletRequest request, Model model) throws IOException {
+        List<News> news = (List) newsRepo.findAll();
+        List<NewsAndContent> newsAndContents = NewsAndContentOperations.INSTANCE.mapFromNewsList(news);
+        model.addAttribute(NEWS_AND_CONTENTS, newsAndContents);
+        model.addAttribute(FLASH_MESSAGE_MANAGER, flashMessageManager);
         return "admin/adminViewEditNews";
     }
 
@@ -208,7 +250,19 @@ public class AdminController {
 
     @RequestMapping("addNews")
     public String goToAddNews(HttpServletRequest request, Model model){
-        //todo: build in future
+        News news = new News();
+        NewsAndContent newsAndContent = new NewsAndContent();
+        newsAndContent.setNews(news);
+        model.addAttribute(NEWS_AND_CONTENT, newsAndContent);
+        return "admin/addNews";
+    }
+
+    @RequestMapping("editNews")
+    public String goToEditNews(HttpServletRequest request, Model model) throws IOException {
+        long newsId = getLongId(request, NEWS_ID);
+        News news = newsRepo.getById(newsId);
+        NewsAndContent newsAndContent = NewsAndContentOperations.INSTANCE.getMappedNewsAndContent(news);
+        model.addAttribute(NEWS_AND_CONTENT, newsAndContent);
         return "admin/addNews";
     }
 
@@ -364,19 +418,34 @@ public class AdminController {
 
     @GetMapping("deleteNews")
     public String deleteNews(HttpSession session, HttpServletRequest request, Model model){
-        //todo: build in future
+        long newsId = getLongId(request, NEWS_ID);
+        News news = newsRepo.getById(newsId);
+        newsRepo.delete(news);
         flashMessageManager.setSession(session);
         flashMessageManager.addMessage(MessagesContents.NEWS_DELETED, INFO);
         model.addAttribute(FLASH_MESSAGE_MANAGER, flashMessageManager);
-        return "admin/adminViewEditNews";
+        return "redirect:/adminViewEditNews";
     }
 
-    @GetMapping("newsSaveChanges")
-    public String newsSaveChanges(HttpSession session, HttpServletRequest request, Model model){
-        //todo: build in future
+    @PostMapping(value = "newsSaveChanges", consumes = {"multipart/form-data"})
+    public String newsSaveChanges(HttpSession session, HttpServletRequest request, Model model, @RequestParam MultipartFile file) throws IOException {
+        String newsTitle = request.getParameter(NEWS_TITLE);
+        News news = newsRepo.getByTitle(newsTitle);
+        String newsContent = request.getParameter(NEWS_CONTENT);
+        String imgPath;
+        if(isNewsNull(news)){
+            news = new News();
+            ImageStoreService imageStoreService = new ImageStoreService(resourceLoader);
+            imageStoreService.createImage(file);
+            imgPath = file.getOriginalFilename();
+        }else {
+            imgPath = news.getImgPath();
+        }
+        news = buildNews(news, newsTitle, imgPath, newsContent);
+        newsRepo.save(news);
         flashMessageManager.setSession(session);
         flashMessageManager.addMessage(MessagesContents.CHANGES_SAVED, INFO);
         model.addAttribute(FLASH_MESSAGE_MANAGER, flashMessageManager);
-        return "admin/adminViewEditNews";
+        return "redirect:/adminViewEditNews";
     }
 }

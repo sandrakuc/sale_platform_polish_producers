@@ -58,7 +58,7 @@
             <li><a href="adminViewSecurityAlert">Alerty bezpieczeństwa</a></li>
             <li><a href="adminViewBugReport">Powiadomienia o błędach</a></li>
             <li><a href="adminViewEditStatute">Zarządzaj regulaminem</a></li>
-            <li><a href="#">Zarządzaj aktualnościami</a><!--todo: build in future-->
+            <li><a href="adminViewEditNews">Zarządzaj aktualnościami</a><!--todo: build in future-->
             </li><li><a href="logout">Wyloguj</a></li>
         </ul>
     </div>
@@ -82,35 +82,24 @@
 <div class="col-xs-12 col-sm-9">
     <h2>Edytuj</h2>
     <div class="applicationForm">
-
-        <div class="input-group">
-            <div class="input-group-prepend">
-                <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+        <form method="post" action="newsSaveChanges" enctype="multipart/form-data">
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroupFileAddon01">Upload</span>
+                </div>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="inputGroupFile01"
+                           aria-describedby="inputGroupFileAddon01" name="file">
+                    <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
+                </div>
             </div>
-            <div class="custom-file">
-                <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01">
-                <label class="custom-file-label" for="inputGroupFile01">Choose file</label>
-            </div>
-        </div>
-
-        <textarea class="form-control rounded-0" id="stateContent" rows="25">
-            1. Cupcake ipsum dolor sit amet jujubes macaroon biscuit muffin. I love muffin cake. Toffee cake soufflé sweet caramels pudding chocolate bar cake soufflé. Toffee tootsie roll toffee. Bear claw lemon drops chupa chups gingerbread carrot cake. Cotton candy halvah apple pie chocolate cake ice cream fruitcake bear claw. Pastry liquorice bear claw chocolate cake I love ice cream biscuit pudding. Cookie chocolate bar bonbon. Chocolate cake cake chocolate jelly powder I love cotton candy ice cream. Dragée I love chocolate bar caramels caramels pudding cheesecake. Dessert croissant topping brownie I love gingerbread. Dragée bear claw cheesecake chupa chups pudding. Wafer powder halvah chocolate pie lemon drops jujubes. Gummi bears oat cake croissant dessert bonbon I love marzipan fruitcake wafer.<br>
-
-            2. Chocolate bar dragée cake I love pie. Dragée I love I love tootsie roll topping ice cream. Sweet roll fruitcake cotton candy brownie gummies danish liquorice biscuit. Gummi bears jelly beans tart ice cream sweet croissant tiramisu sweet. Cookie cake topping sweet cotton candy jelly beans jelly tart cake. Oat cake cheesecake jelly beans gummi bears liquorice donut cookie I love ice cream. Cotton candy brownie powder tart. Candy canes ice cream jelly beans jujubes danish. I love topping brownie cupcake. Caramels liquorice muffin bonbon soufflé. Halvah powder donut oat cake biscuit chocolate bar jujubes. Chocolate cake liquorice pie fruitcake. Marshmallow cupcake biscuit biscuit lollipop tootsie roll. Toffee lemon drops apple pie fruitcake.<br>
-
-            3. Lemon drops jelly beans cookie tiramisu liquorice soufflé marshmallow. Cheesecake macaroon jelly beans. Cake candy canes donut ice cream. Ice cream cake cupcake icing cupcake I love bear claw pudding fruitcake. Marzipan pie pudding. Biscuit candy canes chocolate cake soufflé chocolate danish candy apple pie wafer. Liquorice cake croissant powder lollipop tootsie roll. Pudding cookie dragée I love sweet roll I love jelly-o bear claw ice cream. Jelly-o cheesecake dragée oat cake sesame snaps toffee sugar plum soufflé lemon drops. Chocolate cake marshmallow ice cream tootsie roll chocolate cake bear claw marzipan. Dessert dragée brownie tart. Pastry sweet roll jelly cake. Danish chocolate cake tiramisu ice cream.<br>
-
-            4. Pie tart brownie. Gummies fruitcake powder. Chocolate macaroon gummi bears pudding. I love fruitcake carrot cake I love brownie. Croissant tootsie roll ice cream chupa chups. Croissant cotton candy pie cookie gummi bears. Jelly cookie ice cream. Candy canes soufflé dessert chocolate I love cotton candy tart donut. Chocolate fruitcake croissant marshmallow I love donut I love candy canes. Donut croissant fruitcake. Chocolate chocolate bar gummies icing brownie tiramisu sugar plum. Tiramisu cookie danish gingerbread tart dragée sweet roll cake wafer. Icing I love tiramisu jelly beans.<br>
-
-            5. Jelly cookie pie. Soufflé donut liquorice. Apple pie I love chocolate cake cake brownie pie cake. Tiramisu cupcake donut. I love chupa chups lemon drops pastry I love candy chocolate cake donut. Candy halvah I love apple pie sweet biscuit. Jelly cake candy tootsie roll pastry toffee bear claw croissant. Cotton candy gummies I love oat cake. Icing powder chocolate jujubes candy canes I love caramels. Sweet roll ice cream pie. Croissant I love cotton candy I love wafer. Liquorice chocolate cake chocolate bar marzipan carrot cake dessert chupa chups danish cupcake. Chupa chups I love pie donut dessert fruitcake I love. Sweet dragée icing pudding I love gummies gummi bears.<br>
-        </textarea>
+            <input type="text" name="title" th:value="${newsAndContent.getNews().getTitle()}">
+            <textarea class="form-control rounded-0" id="stateContent" rows="25" name="content" th:text="${newsAndContent.getContent()}"></textarea>
+            <button type="submit" class="btn btn-primary" style="float:right;margin:8px">Zapisz</button>
+        </form>
         <form method="get" action="adminViewEditNews">
             <button type="submit" class="btn btn-primary" style="float:right;margin:8px">Powrót</button>
         </form>
-        <form method="get" action="newsSaveChanges">
-            <button type="submit" class="btn btn-primary" style="float:right;margin:8px">Zapisz</button>
-        </form>
-
         <br>
         <br>
     </div>

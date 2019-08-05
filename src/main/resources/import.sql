@@ -17,3 +17,6 @@ insert into security_alerts values (3, 'WAITING', 'CHEAT_SECURITY_ALERT', '2019-
 insert into bug_raports values (1, '2019-08-04', 'Cupcake ipsum dolor sit amet cupcake carrot cake candy canes.', 'WAITING', 3);
 insert into bug_raports values (2, '2019-08-04', 'Cupcake ipsum dolor sit amet cupcake carrot cake candy canes.', 'TO_REPAIR', 3);
 insert into bug_raports values (3, '2019-08-04', 'Cupcake ipsum dolor sit amet cupcake carrot cake candy canes.', 'REPAIRED', 3);
+
+insert into news values(1, 'news/news_20190301221034.txt', '2019-03-01 22:10:34', 'main.jpg', 'Okazje na Dzień Kobiet!');
+insert into news values(2, 'news/news_20181202174416.txt', '2018-12-02 17:44:16', 'main2.jpg', 'Świąteczny zawrót głowy!');
