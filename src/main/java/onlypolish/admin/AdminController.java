@@ -10,9 +10,7 @@ import onlypolish.dashboard.news.NewsRepo;
 import onlypolish.flashmessage.FlashMessageManager;
 import onlypolish.flashmessage.MessagesContents;
 import onlypolish.imagestore.ImageStoreService;
-import onlypolish.securityalert.AlertStatus;
-import onlypolish.securityalert.SecurityAlert;
-import onlypolish.securityalert.SecurityAlertRepo;
+import onlypolish.securityalert.*;
 import onlypolish.shop.Shop;
 import onlypolish.shop.ShopRepo;
 import onlypolish.user.Permissions;
@@ -22,7 +20,7 @@ import onlypolish.user.applicationform.ApplicationForm;
 import onlypolish.user.applicationform.ApplicationFormConverter;
 import onlypolish.user.applicationform.ApplicationFormRepo;
 import onlypolish.user.applicationform.FormStatus;
-import org.hibernate.mapping.Collection;
+import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
@@ -38,9 +36,8 @@ import static onlypolish.flashmessage.FlashMessageManager.FlashMessage.Type.INFO
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.*;
-import java.util.Collections;
-import java.util.Date;
+import javax.xml.bind.JAXBException;
+import java.io.*;import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -339,12 +336,13 @@ public class AdminController {
     }
 
     @GetMapping("acceptAlert")
-    public String acceptAlert(HttpSession session, HttpServletRequest request, HttpServletResponse response, Model model){
+    public String acceptAlert(HttpSession session, HttpServletRequest request, HttpServletResponse response, Model model) throws JAXBException, IOException, Docx4JException {
         long alertId = getLongId(request, ALERT_ID);
         SecurityAlert securityAlert = securityAlertRepo.getById(alertId);
         securityAlert.setAlertStatus(AlertStatus.ACCEPTED);
         securityAlertRepo.save(securityAlert);
-        //todo in future - sending email and generate raport to .doc or .pdf (to decide)
+        SecurityAlertRaportGenerator.INSTANCE.downloader(response, securityAlert);
+        //todo in future - sending email
         flashMessageManager.setSession(session);
         flashMessageManager.addMessage(MessagesContents.ALERT_ACCEPTED, INFO);
         model.addAttribute(FLASH_MESSAGE_MANAGER, flashMessageManager);

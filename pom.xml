@@ -92,6 +92,14 @@
             <version>1.18.0</version>
             <scope>provided</scope>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.docx4j/docx4j -->
+        <dependency>
+            <groupId>org.docx4j</groupId>
+            <artifactId>docx4j</artifactId>
+            <version>6.1.2</version>
+        </dependency>
+
     </dependencies>
 
     <build>

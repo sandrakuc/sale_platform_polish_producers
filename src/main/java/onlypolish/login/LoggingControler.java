@@ -2,13 +2,11 @@ package onlypolish.login;
 
 import onlypolish.flashmessage.FlashMessageManager;
 import onlypolish.flashmessage.MessagesContents;
-import onlypolish.user.Permissions;
 import onlypolish.user.User;
 import onlypolish.user.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;

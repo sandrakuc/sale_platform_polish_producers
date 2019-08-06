@@ -1,5 +1,7 @@
 package onlypolish.dashboard.news;
 
+import onlypolish.dashboard.StringFromDateGenerator;
+
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -14,30 +16,9 @@ public enum NewsAndContentOperations {
 
     INSTANCE;
 
-    public String yearString(int year){
-        year = 1900 + year;
-        return String.valueOf(year);
-    }
-
-    public String getMonth(int month){
-        month = month + 1;
-        return getOtherTimeUnit(month);
-    }
-
-    public String getOtherTimeUnit(int timeUnit){
-        if(timeUnit <= 9) return "0" + timeUnit;
-        else return String.valueOf(timeUnit);
-     }
-
     public String generateFileName(Date date) {
-
         String fileName = "news/news_";
-        fileName += yearString(date.getYear());
-        fileName += getMonth(date.getMonth());
-        fileName += getOtherTimeUnit(date.getDate());
-        fileName += getOtherTimeUnit(date.getHours());
-        fileName += getOtherTimeUnit(date.getMinutes());
-        fileName += getOtherTimeUnit(date.getSeconds());
+        fileName += StringFromDateGenerator.INSTANCE.stringFromDateGenerator(date);
         fileName += ".txt";
         return fileName;
     }
