@@ -7,6 +7,9 @@ import onlypolish.dashboard.news.News;
 import onlypolish.dashboard.news.NewsAndContent;
 import onlypolish.dashboard.news.NewsAndContentOperations;
 import onlypolish.dashboard.news.NewsRepo;
+import onlypolish.email.Email;
+import onlypolish.email.EmailContents;
+import onlypolish.email.EmailSubjects;
 import onlypolish.flashmessage.FlashMessageManager;
 import onlypolish.flashmessage.MessagesContents;
 import onlypolish.imagestore.ImageStoreService;
@@ -33,6 +36,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import static onlypolish.flashmessage.FlashMessageManager.FlashMessage.Type.INFO;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -319,7 +323,7 @@ public class AdminController {
     }
 
     @GetMapping("acceptApplication")
-    public String acceptApplication(HttpSession session, HttpServletRequest request,  Model model){
+    public String acceptApplication(HttpSession session, HttpServletRequest request,  Model model) throws MessagingException {
         long appId = getLongId(request, APP_ID);
         ApplicationForm applicationForm = applicationFormRepo.getById(appId);
         applicationForm.setFormStatus(FormStatus.ACCEPTED);
@@ -328,7 +332,8 @@ public class AdminController {
         userRepo.save(user);
         Shop shop = ApplicationFormConverter.INSTANCE.createShopFromApplicationForm(applicationForm, user);
         shopRepo.save(shop);
-        //todo in future - send email
+        Email email = new Email(user.getEmail(), EmailSubjects.YOUR_ACCOUNT_IS_CREATED, EmailContents.createAccountCreatedEmailContent(user.getLogin(), user.getPassword()));
+        email.sendEmail();
         flashMessageManager.setSession(session);
         flashMessageManager.addMessage(MessagesContents.APPLICATION_ACCEPTED, INFO);
         model.addAttribute(FLASH_MESSAGE_MANAGER, flashMessageManager);
@@ -336,13 +341,14 @@ public class AdminController {
     }
 
     @GetMapping("acceptAlert")
-    public String acceptAlert(HttpSession session, HttpServletRequest request, HttpServletResponse response, Model model) throws JAXBException, IOException, Docx4JException {
+    public String acceptAlert(HttpSession session, HttpServletRequest request, HttpServletResponse response, Model model) throws JAXBException, IOException, Docx4JException, MessagingException {
         long alertId = getLongId(request, ALERT_ID);
         SecurityAlert securityAlert = securityAlertRepo.getById(alertId);
         securityAlert.setAlertStatus(AlertStatus.ACCEPTED);
         securityAlertRepo.save(securityAlert);
         SecurityAlertRaportGenerator.INSTANCE.downloader(response, securityAlert);
-        //todo in future - sending email
+        Email email = new Email(securityAlert.getInformer().getEmail(), EmailSubjects.START_OF_INVESTIGATION, EmailContents.createStartInvestigationEmailContent(securityAlert));
+        email.sendEmail();
         flashMessageManager.setSession(session);
         flashMessageManager.addMessage(MessagesContents.ALERT_ACCEPTED, INFO);
         model.addAttribute(FLASH_MESSAGE_MANAGER, flashMessageManager);
@@ -350,12 +356,13 @@ public class AdminController {
     }
 
     @GetMapping("rejectApplication")
-    public String rejectApplication(HttpSession session, HttpServletRequest request, Model model){
+    public String rejectApplication(HttpSession session, HttpServletRequest request, Model model) throws MessagingException {
         long appId = getLongId(request, APP_ID);
         ApplicationForm applicationForm = applicationFormRepo.getById(appId);
         applicationForm.setFormStatus(FormStatus.REJECTED);
         applicationFormRepo.save(applicationForm);
-        //todo in future - send email
+        Email email = new Email(applicationForm.getEmail(), EmailSubjects.APPLICATION_REJECTED, EmailContents.createApplicationRejectedEmailContent());
+        email.sendEmail();
         flashMessageManager.setSession(session);
         flashMessageManager.addMessage(MessagesContents.APPLICATION_REJECTED, INFO);
         model.addAttribute(FLASH_MESSAGE_MANAGER, flashMessageManager);
@@ -363,12 +370,13 @@ public class AdminController {
     }
 
     @GetMapping("sendPaymentRequest")
-    public String sendPaymentRequest(HttpSession session, HttpServletRequest request, Model model){
+    public String sendPaymentRequest(HttpSession session, HttpServletRequest request, Model model) throws MessagingException {
         long appId = getLongId(request, APP_ID);
         ApplicationForm applicationForm = applicationFormRepo.getById(appId);
         applicationForm.setFormStatus(FormStatus.WAITING_FOR_MONEY);
         applicationFormRepo.save(applicationForm);
-        //todo in future - add sending email
+        Email email = new Email(applicationForm.getEmail(), EmailSubjects.PAYMENT_REQUEST, EmailContents.createPaymentRequestEmailContent());
+        email.sendEmail();
         flashMessageManager.setSession(session);
         flashMessageManager.addMessage(MessagesContents.PAYMENT_REQUEST_SEND, INFO);
         model.addAttribute(FLASH_MESSAGE_MANAGER, flashMessageManager);
@@ -376,12 +384,13 @@ public class AdminController {
     }
 
     @GetMapping("startApplicationConsidering")
-    public String startApplicationConsidering(HttpSession session, HttpServletRequest request, Model model){
+    public String startApplicationConsidering(HttpSession session, HttpServletRequest request, Model model) throws MessagingException {
         long appId = getLongId(request, APP_ID);
         ApplicationForm applicationForm = applicationFormRepo.getById(appId);
         applicationForm.setFormStatus(FormStatus.CONSIDERED);
         applicationFormRepo.save(applicationForm);
-        //todo in future - send email
+        Email email = new Email(applicationForm.getEmail(), EmailSubjects.APPLICATION_CONSIDERING, EmailContents.createApplicationConsideringEmailContent());
+        email.sendEmail();
         flashMessageManager.setSession(session);
         flashMessageManager.addMessage(MessagesContents.APPLICATION_CONSIDERED, INFO);
         model.addAttribute(FLASH_MESSAGE_MANAGER, flashMessageManager);
@@ -389,12 +398,13 @@ public class AdminController {
     }
 
     @GetMapping("reportRepaired")
-    public String reportRepaired(HttpSession session, HttpServletRequest request, Model model){
+    public String reportRepaired(HttpSession session, HttpServletRequest request, Model model) throws MessagingException {
         long raportId = getLongId(request, RAPORT_ID);
         BugRaport raport = bugRaportRepo.getById(raportId);
         raport.setStatus(RaportStatus.REPAIRED);
         bugRaportRepo.save(raport);
-        //todo in future - send email
+        Email email = new Email(raport.getInformer().getEmail(), EmailSubjects.BUG_IS_REPAIRED, EmailContents.createBugIsRepairedEmailContent());
+        email.sendEmail();
         flashMessageManager.setSession(session);
         flashMessageManager.addMessage(MessagesContents.RAPORT_REPAIRED, INFO);
         model.addAttribute(FLASH_MESSAGE_MANAGER, flashMessageManager);
@@ -402,12 +412,13 @@ public class AdminController {
     }
 
     @GetMapping("addReportToRepair")
-    public String addReportToRepair(HttpSession session, HttpServletRequest request, Model model){
+    public String addReportToRepair(HttpSession session, HttpServletRequest request, Model model) throws MessagingException {
         long raportId = getLongId(request, RAPORT_ID);
         BugRaport raport = bugRaportRepo.getById(raportId);
         raport.setStatus(RaportStatus.TO_REPAIR);
         bugRaportRepo.save(raport);
-        //todo in future - send email
+        Email email = new Email(raport.getInformer().getEmail(), EmailSubjects.START_BUG_REPAIRING, EmailContents.createStartBugRepairingEmailContent());
+        email.sendEmail();
         flashMessageManager.setSession(session);
         flashMessageManager.addMessage(MessagesContents.RAPORT_START_REPAIRING, INFO);
         model.addAttribute(FLASH_MESSAGE_MANAGER, flashMessageManager);
