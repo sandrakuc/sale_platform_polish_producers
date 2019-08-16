@@ -19,7 +19,7 @@ public class SecurityAlertTemplateHelper {
     private static final String OFFENSIVE_OPINION = "Obraźliwa opinia";
     private static final String CHEAT = "Oszustwo";
 
-    public static final String HEADING_3 = "Heading 3";
+    public static final String HEADING_3 = "Heading3";
 
 
     public static String getTypeDescription(SecurityAlert securityAlert){

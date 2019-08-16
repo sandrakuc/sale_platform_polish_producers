@@ -341,7 +341,7 @@ public class AdminController {
     }
 
     @GetMapping("acceptAlert")
-    public String acceptAlert(HttpSession session, HttpServletRequest request, HttpServletResponse response, Model model) throws JAXBException, IOException, Docx4JException, MessagingException {
+    public void acceptAlert(HttpSession session, HttpServletRequest request, HttpServletResponse response, Model model) throws JAXBException, IOException, Docx4JException, MessagingException {
         long alertId = getLongId(request, ALERT_ID);
         SecurityAlert securityAlert = securityAlertRepo.getById(alertId);
         securityAlert.setAlertStatus(AlertStatus.ACCEPTED);
@@ -352,7 +352,6 @@ public class AdminController {
         flashMessageManager.setSession(session);
         flashMessageManager.addMessage(MessagesContents.ALERT_ACCEPTED, INFO);
         model.addAttribute(FLASH_MESSAGE_MANAGER, flashMessageManager);
-        return "redirect:/adminViewSecurityAlert";
     }
 
     @GetMapping("rejectApplication")

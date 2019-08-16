@@ -2,10 +2,11 @@ package onlypolish.securityalert;
 
 import onlypolish.dashboard.StringFromDateGenerator;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
-import org.docx4j.openpackaging.exceptions.InvalidFormatException;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.openpackaging.parts.WordprocessingML.MainDocumentPart;
 
+import javax.faces.context.FacesContext;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
@@ -13,6 +14,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
+
+import static org.docx4j.org.apache.xml.security.utils.JavaUtils.getBytesFromFile;
 
 public enum SecurityAlertRaportGenerator {
 
@@ -43,11 +46,14 @@ public enum SecurityAlertRaportGenerator {
     public void downloader(HttpServletResponse response, SecurityAlert securityAlert) throws Docx4JException, IOException {
         String fileName = generateDoc(securityAlert);
         Path file = Paths.get(fileName);
+        ServletOutputStream outStream = response.getOutputStream();
         if(Files.exists(file)){
             response.setContentType("application/vnd.openxmlformats-officedocument.wordprocessingml.document");
             response.addHeader("Content-Disposition", "attachment; filename=" + fileName);
-            Files.copy(file, response.getOutputStream());
-            response.getOutputStream().flush();
+            Files.copy(file, outStream);
+            outStream.flush();
+            outStream.close();
+            return;
         }
     }
 
