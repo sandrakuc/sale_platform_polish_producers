@@ -81,6 +81,7 @@
 
 <div class="col-xs-12 col-sm-9">
     <h2>Alerty bezpieczeństwa</h2>
+    <a href="/fileList"><button class="btn btn-primary">Lista raportów do pobrania</button></a>
     <div class="applicationForm" th:each="securityAlert: ${securityAlerts}">
         <h3>Rodzaj zgłoszenia: <span th:if="${securityAlert.isNotMadeInPolandSecurityAlert()}">Produkt nie produkowany w Polsce</span><span th:if="${securityAlert.isOffensiveOpinionSecurityAlert()}">Obraźliwa opinia</span><span th:if="${securityAlert.isCheatSecurityAlert()}">Oszustwo</span></h3>
         <table class="table table-borderless">

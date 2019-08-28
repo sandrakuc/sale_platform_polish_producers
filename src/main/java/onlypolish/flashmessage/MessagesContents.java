@@ -11,7 +11,7 @@ public class MessagesContents {
     public static final String USER_DELETED = "Użytkownik został usunięty z bazy";
     public static final String CHANGES_SAVED = "Zmiany zostały zapisane!";
     public static final String APPLICATION_ACCEPTED = "Wniosek został zaakceptowany!\n Użytkownik oraz profil sklepu został utworzony.";
-    public static final String ALERT_ACCEPTED = "Wiadomość o rozpoczęciu postępowania wysłana do użytkownika";
+    public static final String ALERT_ACCEPTED = "Wiadomość o rozpoczęciu postępowania wysłana do użytkownika. Raport dostępny do pobrania w liście plików do pobrania!";
     public static final String APPLICATION_REJECTED = "Wniosek został odrzucony!";
     public static final String PAYMENT_REQUEST_SEND = "Wniosek zmienił status na 'Do akceptacji - oczekujący na wpłatę'.\n Polecenie zapłaty zostało wysłane na podany w formularzu adres e-mail.";
     public static final String APPLICATION_CONSIDERED = "Wniosek zmienił status na 'Rozpatrywany'.\n Informacja o rozpoczęciu rozpatrywania wniosku została wysłana na podany w formularzu adres e-mail.";

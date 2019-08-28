@@ -14,6 +14,8 @@ import onlypolish.flashmessage.FlashMessageManager;
 import onlypolish.flashmessage.MessagesContents;
 import onlypolish.imagestore.ImageStoreService;
 import onlypolish.securityalert.*;
+import onlypolish.securityalert.generatedfile.GeneratedFile;
+import onlypolish.securityalert.generatedfile.GeneratedFileRepo;
 import onlypolish.shop.Shop;
 import onlypolish.shop.ShopRepo;
 import onlypolish.user.Permissions;
@@ -71,6 +73,9 @@ public class AdminController {
 
     @Autowired
     ResourceLoader resourceLoader;
+
+    @Autowired
+    GeneratedFileRepo generatedFileRepo;
 
     private static final String USERS = "users";
     private static final String PERMISSIONS = "perms";
@@ -341,17 +346,20 @@ public class AdminController {
     }
 
     @GetMapping("acceptAlert")
-    public void acceptAlert(HttpSession session, HttpServletRequest request, HttpServletResponse response, Model model) throws JAXBException, IOException, Docx4JException, MessagingException {
+    public String acceptAlert(HttpSession session, HttpServletRequest request, HttpServletResponse response, Model model) throws JAXBException, IOException, Docx4JException, MessagingException {
         long alertId = getLongId(request, ALERT_ID);
         SecurityAlert securityAlert = securityAlertRepo.getById(alertId);
         securityAlert.setAlertStatus(AlertStatus.ACCEPTED);
         securityAlertRepo.save(securityAlert);
-        SecurityAlertRaportGenerator.INSTANCE.downloader(response, securityAlert);
+        String fileName = SecurityAlertRaportGenerator.INSTANCE.generateDoc(securityAlert);
+        GeneratedFile generatedFile = GeneratedFile.builder().fileName(fileName).generatedDate(new Date()).build();
+        generatedFileRepo.save(generatedFile);
         Email email = new Email(securityAlert.getInformer().getEmail(), EmailSubjects.START_OF_INVESTIGATION, EmailContents.createStartInvestigationEmailContent(securityAlert));
         email.sendEmail();
         flashMessageManager.setSession(session);
         flashMessageManager.addMessage(MessagesContents.ALERT_ACCEPTED, INFO);
         model.addAttribute(FLASH_MESSAGE_MANAGER, flashMessageManager);
+        return "redirect:/adminViewSecurityAlert";
     }
 
     @GetMapping("rejectApplication")
