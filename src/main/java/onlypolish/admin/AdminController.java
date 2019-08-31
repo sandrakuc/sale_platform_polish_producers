@@ -96,7 +96,12 @@ public class AdminController {
     private static final String NEWS_ID = "newsId";
     private static final String NEWS_TITLE = "title";
     private static final String NEWS_CONTENT = "content";
-    private static final String FILE = "file";
+    private static final String USER = "user";
+
+    private boolean isUnauthorized(HttpSession session){
+        User user = (User) session.getAttribute(USER);
+        return user == null || !user.isAdmin();
+    }
 
     private boolean isNewsNull(News news){
         return news == null;
@@ -174,7 +179,10 @@ public class AdminController {
     }
 
     @RequestMapping("adminPage")
-    public String goToAdminPage(HttpServletRequest request, Model model){
+    public String goToAdminPage(HttpServletRequest request, Model model, HttpSession session){
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         List<User> users = (List) userRepo.findAll();
         users = filterListNoAdminUsers(users);
         model.addAttribute(USERS, users);
@@ -183,7 +191,10 @@ public class AdminController {
     }
 
     @RequestMapping("adminViewApplicationForms")
-    public String goToAdminViewApplicationForms(HttpServletRequest request, Model model){
+    public String goToAdminViewApplicationForms(HttpServletRequest request, Model model, HttpSession session){
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         List<ApplicationForm> applicationForms = (List) applicationFormRepo.findAll();
         applicationForms = getNotAcceptedAndNotRejectedApplicationForms(applicationForms);
         model.addAttribute(APPLICATION_FORMS, applicationForms);
@@ -192,7 +203,10 @@ public class AdminController {
     }
 
     @RequestMapping("adminViewSecurityAlert")
-    public String goToAdminViewSecurityAlert(HttpServletRequest request, Model model){
+    public String goToAdminViewSecurityAlert(HttpServletRequest request, Model model, HttpSession session){
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         List<SecurityAlert> securityAlerts = (List) securityAlertRepo.findAll();
         securityAlerts = getWaitingSecurityAlert(securityAlerts);
         model.addAttribute(SECURITY_ALERTS, securityAlerts);
@@ -201,7 +215,10 @@ public class AdminController {
     }
 
     @RequestMapping("adminViewEditStatute")
-    public String goToAdminViewEditStatute(HttpServletRequest request, Model model) throws IOException {
+    public String goToAdminViewEditStatute(HttpServletRequest request, Model model, HttpSession session) throws IOException {
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         InputStream is = new FileInputStream("statute.txt");
         BufferedReader buf = new BufferedReader(new InputStreamReader(is));
         String line = buf.readLine();
@@ -216,7 +233,10 @@ public class AdminController {
     }
 
     @RequestMapping("adminViewEditNews")
-    public String goToAdminViewEditNews(HttpServletRequest request, Model model) throws IOException {
+    public String goToAdminViewEditNews(HttpServletRequest request, Model model, HttpSession session) throws IOException {
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         List<News> news = (List) newsRepo.findAll();
         List<NewsAndContent> newsAndContents = NewsAndContentOperations.INSTANCE.mapFromNewsList(news);
         model.addAttribute(NEWS_AND_CONTENTS, newsAndContents);
@@ -225,7 +245,10 @@ public class AdminController {
     }
 
     @GetMapping("adminViewEditStatute")
-    public String goToAdminViewEditStatute2(HttpServletRequest request, Model model) throws IOException {
+    public String goToAdminViewEditStatute2(HttpServletRequest request, Model model, HttpSession session) throws IOException {
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         InputStream is = new FileInputStream("statute.txt");
         BufferedReader buf = new BufferedReader(new InputStreamReader(is));
         String line = buf.readLine();
@@ -240,7 +263,10 @@ public class AdminController {
     }
 
     @RequestMapping("editStatute")
-    public String goToEditStatute(HttpServletRequest request, Model model) throws IOException {
+    public String goToEditStatute(HttpServletRequest request, Model model, HttpSession session) throws IOException {
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         InputStream is = new FileInputStream("statute.txt");
         BufferedReader buf = new BufferedReader(new InputStreamReader(is));
         String line = buf.readLine();
@@ -255,7 +281,10 @@ public class AdminController {
     }
 
     @RequestMapping("addNews")
-    public String goToAddNews(HttpServletRequest request, Model model){
+    public String goToAddNews(HttpServletRequest request, Model model, HttpSession session){
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         News news = new News();
         NewsAndContent newsAndContent = new NewsAndContent();
         newsAndContent.setNews(news);
@@ -264,7 +293,10 @@ public class AdminController {
     }
 
     @RequestMapping("editNews")
-    public String goToEditNews(HttpServletRequest request, Model model) throws IOException {
+    public String goToEditNews(HttpServletRequest request, Model model, HttpSession session) throws IOException {
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         long newsId = getLongId(request, NEWS_ID);
         News news = newsRepo.getById(newsId);
         NewsAndContent newsAndContent = NewsAndContentOperations.INSTANCE.getMappedNewsAndContent(news);
@@ -273,7 +305,10 @@ public class AdminController {
     }
 
     @RequestMapping("adminViewBugReport")
-    public String goToAdminViewBugReport(HttpServletRequest request, Model model){
+    public String goToAdminViewBugReport(HttpServletRequest request, Model model, HttpSession session){
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         List<BugRaport> bugRaports = (List) bugRaportRepo.findAll();
         bugRaports = getNotRepairedBugRaports(bugRaports);
         model.addAttribute(BUG_RAPORTS, bugRaports);
@@ -283,6 +318,9 @@ public class AdminController {
 
     @GetMapping("deleteAccount")
     public String deleteAccount(HttpSession session, HttpServletRequest request, Model model){
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         long userId = getLongId(request, USER_ID);
         User user = userRepo.getById(userId);
         userRepo.delete(user);
@@ -294,6 +332,9 @@ public class AdminController {
 
     @GetMapping("search")
     public String search(HttpSession session, HttpServletRequest request, Model model){
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         String subs = request.getParameter(SUBSTRING);
         List<User> users = (List) userRepo.findAll();
         users = getUsersWithSubstring(users, subs);
@@ -303,6 +344,9 @@ public class AdminController {
 
     @GetMapping("statuteSaveChanges")
     public String statuteSaveChanges(HttpSession session, HttpServletRequest request, Model model) throws IOException {
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         String statuteContent = request.getParameter(STATUTE_CONTENT);
         try (PrintWriter out = new PrintWriter("statute.txt")) {
             out.println(statuteContent);
@@ -316,6 +360,9 @@ public class AdminController {
 
     @GetMapping("saveAccountChanges")
     public String saveAccountChanges(HttpSession session, HttpServletRequest request, Model model){
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         long userId = getLongId(request, USER_ID);
         User user = userRepo.getById(userId);
         Permissions permissions = convertPermissionFromStringToEnum(request.getParameter(PERMISSIONS));
@@ -329,6 +376,9 @@ public class AdminController {
 
     @GetMapping("acceptApplication")
     public String acceptApplication(HttpSession session, HttpServletRequest request,  Model model) throws MessagingException {
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         long appId = getLongId(request, APP_ID);
         ApplicationForm applicationForm = applicationFormRepo.getById(appId);
         applicationForm.setFormStatus(FormStatus.ACCEPTED);
@@ -347,6 +397,9 @@ public class AdminController {
 
     @GetMapping("acceptAlert")
     public String acceptAlert(HttpSession session, HttpServletRequest request, HttpServletResponse response, Model model) throws JAXBException, IOException, Docx4JException, MessagingException {
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         long alertId = getLongId(request, ALERT_ID);
         SecurityAlert securityAlert = securityAlertRepo.getById(alertId);
         securityAlert.setAlertStatus(AlertStatus.ACCEPTED);
@@ -364,6 +417,9 @@ public class AdminController {
 
     @GetMapping("rejectApplication")
     public String rejectApplication(HttpSession session, HttpServletRequest request, Model model) throws MessagingException {
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         long appId = getLongId(request, APP_ID);
         ApplicationForm applicationForm = applicationFormRepo.getById(appId);
         applicationForm.setFormStatus(FormStatus.REJECTED);
@@ -378,6 +434,9 @@ public class AdminController {
 
     @GetMapping("sendPaymentRequest")
     public String sendPaymentRequest(HttpSession session, HttpServletRequest request, Model model) throws MessagingException {
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         long appId = getLongId(request, APP_ID);
         ApplicationForm applicationForm = applicationFormRepo.getById(appId);
         applicationForm.setFormStatus(FormStatus.WAITING_FOR_MONEY);
@@ -392,6 +451,9 @@ public class AdminController {
 
     @GetMapping("startApplicationConsidering")
     public String startApplicationConsidering(HttpSession session, HttpServletRequest request, Model model) throws MessagingException {
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         long appId = getLongId(request, APP_ID);
         ApplicationForm applicationForm = applicationFormRepo.getById(appId);
         applicationForm.setFormStatus(FormStatus.CONSIDERED);
@@ -406,6 +468,9 @@ public class AdminController {
 
     @GetMapping("reportRepaired")
     public String reportRepaired(HttpSession session, HttpServletRequest request, Model model) throws MessagingException {
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         long raportId = getLongId(request, RAPORT_ID);
         BugRaport raport = bugRaportRepo.getById(raportId);
         raport.setStatus(RaportStatus.REPAIRED);
@@ -420,6 +485,9 @@ public class AdminController {
 
     @GetMapping("addReportToRepair")
     public String addReportToRepair(HttpSession session, HttpServletRequest request, Model model) throws MessagingException {
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         long raportId = getLongId(request, RAPORT_ID);
         BugRaport raport = bugRaportRepo.getById(raportId);
         raport.setStatus(RaportStatus.TO_REPAIR);
@@ -434,6 +502,9 @@ public class AdminController {
 
     @GetMapping("deleteNews")
     public String deleteNews(HttpSession session, HttpServletRequest request, Model model){
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         long newsId = getLongId(request, NEWS_ID);
         News news = newsRepo.getById(newsId);
         newsRepo.delete(news);
@@ -445,6 +516,9 @@ public class AdminController {
 
     @PostMapping(value = "newsSaveChanges", consumes = {"multipart/form-data"})
     public String newsSaveChanges(HttpSession session, HttpServletRequest request, Model model, @RequestParam MultipartFile file) throws IOException {
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
         String newsTitle = request.getParameter(NEWS_TITLE);
         News news = newsRepo.getByTitle(newsTitle);
         String newsContent = request.getParameter(NEWS_CONTENT);
