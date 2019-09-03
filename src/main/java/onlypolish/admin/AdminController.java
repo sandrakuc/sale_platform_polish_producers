@@ -21,15 +21,13 @@ import onlypolish.shop.ShopRepo;
 import onlypolish.user.Permissions;
 import onlypolish.user.User;
 import onlypolish.user.UserRepo;
-import onlypolish.user.applicationform.ApplicationForm;
-import onlypolish.user.applicationform.ApplicationFormConverter;
-import onlypolish.user.applicationform.ApplicationFormRepo;
-import onlypolish.user.applicationform.FormStatus;
+import onlypolish.user.applicationform.*;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,8 +40,11 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import javax.xml.bind.JAXBException;
-import java.io.*;import java.util.Date;
+import java.io.*;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -97,6 +98,8 @@ public class AdminController {
     private static final String NEWS_TITLE = "title";
     private static final String NEWS_CONTENT = "content";
     private static final String USER = "user";
+    private static final String VALID_DATE = "validDate";
+    private static final String VALID_YEAR = "validYear";
 
     private boolean isUnauthorized(HttpSession session){
         User user = (User) session.getAttribute(USER);
@@ -105,6 +108,17 @@ public class AdminController {
 
     private boolean isNewsNull(News news){
         return news == null;
+    }
+
+    private boolean checkDateIsValid(Date date){
+        Date currDate = new Date();
+        return currDate.compareTo(date) > 0;
+    }
+
+    private boolean checkYearIsCorrect(String year, Date date){
+        int year1 = Integer.parseInt(year);
+        int year2 = 1900 + date.getYear();
+        return year1 == year2;
     }
 
     private News buildNews(News news, String title, String imgPath, String newsContent) throws FileNotFoundException {
@@ -537,5 +551,49 @@ public class AdminController {
         flashMessageManager.addMessage(MessagesContents.CHANGES_SAVED, INFO);
         model.addAttribute(FLASH_MESSAGE_MANAGER, flashMessageManager);
         return "redirect:/adminViewEditNews";
+    }
+
+    @GetMapping("createNewUserWithShop")
+    public String createNewUserWithShop(ApplicationFormDTO applicationFormDTO, BindingResult bindingResult, HttpSession session, HttpServletRequest request, Model model){
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
+        boolean validYear = true;
+        boolean validDate = true;
+        User user = (User) session.getAttribute(USER);
+        model.addAttribute(USER, user);
+        model.addAttribute(VALID_YEAR, validYear);
+        model.addAttribute(VALID_DATE, validDate);
+        return "registering/newShopUserApplication";
+    }
+
+    @PostMapping("newUserWithShop")
+    public String newUserWithShop(@Valid ApplicationFormDTO applicationFormDTO, BindingResult bindingResult, HttpSession session, Model model) throws ParseException, MessagingException {
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
+        BuildApplicationForm buildApplicationForm = new BuildApplicationForm();
+        ApplicationForm applicationForm = buildApplicationForm.buildApplicationForm(applicationFormDTO);
+        boolean validDate = checkDateIsValid(applicationForm.getDateOfEntireToKrs());
+        boolean validYear = checkYearIsCorrect(applicationForm.getYearOfStarting(), applicationForm.getDateOfEntireToKrs());
+        if(bindingResult.hasErrors() || !validDate || !validYear){
+            User user = (User) session.getAttribute(USER);
+            model.addAttribute(USER, user);
+            model.addAttribute(VALID_DATE, validDate);
+            model.addAttribute(VALID_YEAR, validYear);
+            return "registering/newShopUserApplication";
+        }
+        User user = ApplicationFormConverter.INSTANCE.crateUserFromApplicationForm(applicationForm);
+        userRepo.save(user);
+        Shop shop = ApplicationFormConverter.INSTANCE.createShopFromApplicationForm(applicationForm, user);
+        shopRepo.save(shop);
+        Email email = new Email(user.getEmail(), EmailSubjects.YOUR_ACCOUNT_IS_CREATED, EmailContents.createAccountCreatedEmailContent(user.getLogin(), user.getPassword()));
+        email.sendEmail();
+        flashMessageManager.setSession(session);
+        flashMessageManager.addMessage(MessagesContents.APPLICATION_ACCEPTED, INFO);
+        model.addAttribute(VALID_YEAR, validYear);
+        model.addAttribute(VALID_DATE, validDate);
+        model.addAttribute(FLASH_MESSAGE_MANAGER, flashMessageManager);
+        return "redirect:/adminPage";
     }
 }
