@@ -66,4 +66,7 @@ public class Shop {
 
     @Size(min=2, max=2000)
     private String description;
+
+    @Enumerated(EnumType.STRING)
+    private ShopAndProductStatus status;
 }

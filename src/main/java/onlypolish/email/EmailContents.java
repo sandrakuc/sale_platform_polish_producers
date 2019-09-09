@@ -17,6 +17,7 @@ public class EmailContents {
     private static final String APPLICATION_CONSIDERING = "Witaj!\nTwoje podanie o założenie konta sklepu jest właśnie rozpatrywane! W najbliższym czasie jeden z członków naszego zespołu skontaktuje się z Tobą w sprawie spotkania, aby lepiej poznać Twoją firmę!\nDziękujemy za chęć współpracy oraz zaufanie!\nPozdrawiamy,\nzespół %s\n\nEmail wygenerowany automatycznie, prosimy na niego nie odpowiadać.";
     private static final String BUG_IS_REPAIRED = "Witaj!\nDziękujemy za pomoc w usprawnianiu naszego serwisu! Zgłoszona przez Ciebie usterka została właśnie naprawiona! W razie problemów prosimy o dalszy kontakt!\nPozdrawiamy,\nzespół %s\n\nEmail wygenerowany automatycznie, prosimy na niego nie odpowiadać.";
     private static final String START_BUG_REPAIRING = "Witaj!\nDziękujemy za pomoc w usprawnianiu naszego serwisu! Zgłoszona przez Ciebie usterka jest właśnie naprawiana! W razie problemów prosimy o dalszy kontakt!\nPozdrawiamy,\nzespół %s\n\nEmail wygenerowany automatycznie, prosimy na niego nie odpowiadać.";
+    private static final String REBUKE = "Witaj!\nDotarły do nas informacje o złamaniu przez Ciebie regulaminu naszego serwisu. To jest pierwsze ostrzeżenie. Następnym razem wyciągniemy poważniejsze konsekwencje.\nProsimy o usunięcie obraźliwej opinii, usunięcie ze sprzedaży niespełniającego zasad produktu, wpłaty zaległej kwoty dla sprzedającego lub zadośćuczynienia kupującemu.\nPozdrawiamy,\nzespół %s\n\nEmail wygenerowany automatycznie, prosimy na niego nie odpowiadać.";
 
     private static String alertTypeToStringConvert(SecurityAlert securityAlert){
         if(securityAlert.isOffensiveOpinionSecurityAlert()) return "obraźliwej opinii";
@@ -58,5 +59,9 @@ public class EmailContents {
 
     public static String createStartBugRepairingEmailContent(){
         return String.format(START_BUG_REPAIRING, EmailVariables.OUR_COMPANY_NAME);
+    }
+
+    public static String createRebukeEmailContent(){
+        return String.format(REBUKE, EmailVariables.OUR_COMPANY_NAME);
     }
 }

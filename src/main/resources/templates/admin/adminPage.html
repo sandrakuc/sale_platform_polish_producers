@@ -78,6 +78,7 @@
             <th>Uprawnienia</th>
             <th>Zapisz</th>
             <th>Usuń</th>
+            <th>Wyślij upomnienie</th>
         </tr>
         </thead>
         <tbody>
@@ -99,6 +100,10 @@
             <td><form method="get" action="deleteAccount">
                 <input type="hidden" name="userId" th:value="${user.getId()}" />
                 <button class="btn btn-primary" type="submit">USUŃ</button>
+            </form></td>
+            <td><form method="get" action="sendRebuke">
+                <input type="hidden" name="userId" th:value="${user.getId()}" />
+                <button class="btn btn-primary" type="submit">WYŚLIJ UPOMNIENIE</button>
             </form></td>
         </tr>
         </tbody>

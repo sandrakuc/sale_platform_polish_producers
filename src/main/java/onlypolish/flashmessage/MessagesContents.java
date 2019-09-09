@@ -18,6 +18,7 @@ public class MessagesContents {
     public static final String RAPORT_REPAIRED = "Informacja o naprawieniu błędu została wysłana do użytkownika.";
     public static final String RAPORT_START_REPAIRING = "Informacja o rozpoczęciu pracy nad naprawieniem błędu została wysłana do użytkownika.";
     public static final String NEWS_DELETED = "Post został usunięty!";
+    public static final String REBUKE_SENT = "Upomnienie wysłane!";
 
     public static String getLoggedMessage(String login){
         return LOGGED + login;

@@ -18,9 +18,7 @@ import onlypolish.securityalert.generatedfile.GeneratedFile;
 import onlypolish.securityalert.generatedfile.GeneratedFileRepo;
 import onlypolish.shop.Shop;
 import onlypolish.shop.ShopRepo;
-import onlypolish.user.Permissions;
-import onlypolish.user.User;
-import onlypolish.user.UserRepo;
+import onlypolish.user.*;
 import onlypolish.user.applicationform.*;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +75,9 @@ public class AdminController {
 
     @Autowired
     GeneratedFileRepo generatedFileRepo;
+
+    @Autowired
+    BlackListRepo blackListRepo;
 
     private static final String USERS = "users";
     private static final String PERMISSIONS = "perms";
@@ -593,6 +594,24 @@ public class AdminController {
         flashMessageManager.addMessage(MessagesContents.APPLICATION_ACCEPTED, INFO);
         model.addAttribute(VALID_YEAR, validYear);
         model.addAttribute(VALID_DATE, validDate);
+        model.addAttribute(FLASH_MESSAGE_MANAGER, flashMessageManager);
+        return "redirect:/adminPage";
+    }
+
+    @GetMapping("sendRebuke")
+    public String sendRebuke(HttpSession session, HttpServletRequest request, Model model) throws MessagingException {
+        if(isUnauthorized(session)){
+            return "forbidden";
+        }
+        long userId = getLongId(request, USER_ID);
+        User user = userRepo.getById(userId);
+        BlackListBuilder blackListBuilder = new BlackListBuilder();
+        BlackList blackList = blackListBuilder.buildBlackList(user, Punishment.REBUKE);
+        blackListRepo.save(blackList);
+        Email email = new Email(blackList.getUserEmail(), EmailSubjects.REBUKE, EmailContents.createRebukeEmailContent());
+        email.sendEmail();
+        flashMessageManager.setSession(session);
+        flashMessageManager.addMessage(MessagesContents.REBUKE_SENT, INFO);
         model.addAttribute(FLASH_MESSAGE_MANAGER, flashMessageManager);
         return "redirect:/adminPage";
     }

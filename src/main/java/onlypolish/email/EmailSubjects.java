@@ -12,4 +12,5 @@ public class EmailSubjects {
     public static final String APPLICATION_CONSIDERING = "Twoje zgłoszenie jest rozpatrywane!";
     public static final String BUG_IS_REPAIRED = "Zgłoszona przez Ciebie usterka została naprawiona!";
     public static final String START_BUG_REPAIRING = "Praca nad zgłoszoną przez Ciebie usterką rozpoczęta!";
+    public static final String REBUKE = "Upomnienie";
 }
