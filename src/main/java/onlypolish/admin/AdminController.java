@@ -1,5 +1,6 @@
 package onlypolish.admin;
 
+import com.itextpdf.text.DocumentException;
 import onlypolish.bugraport.BugRaport;
 import onlypolish.bugraport.BugRaportRepo;
 import onlypolish.bugraport.RaportStatus;
@@ -17,7 +18,13 @@ import onlypolish.securityalert.*;
 import onlypolish.securityalert.generatedfile.GeneratedFile;
 import onlypolish.securityalert.generatedfile.GeneratedFileRepo;
 import onlypolish.shop.Shop;
+import onlypolish.shop.ShopAndProductStatus;
 import onlypolish.shop.ShopRepo;
+import onlypolish.shop.order.Order;
+import onlypolish.shop.order.OrderPdfGenerator;
+import onlypolish.shop.order.OrderRepo;
+import onlypolish.shop.product.Product;
+import onlypolish.shop.product.ProductRepo;
 import onlypolish.user.*;
 import onlypolish.user.applicationform.*;
 import org.docx4j.openpackaging.exceptions.Docx4JException;
@@ -79,6 +86,12 @@ public class AdminController {
     @Autowired
     BlackListRepo blackListRepo;
 
+    @Autowired
+    ProductRepo productRepo;
+
+    @Autowired
+    OrderRepo orderRepo;
+
     private static final String USERS = "users";
     private static final String PERMISSIONS = "perms";
     private static final String SELLER = "SELLER";
@@ -101,6 +114,25 @@ public class AdminController {
     private static final String USER = "user";
     private static final String VALID_DATE = "validDate";
     private static final String VALID_YEAR = "validYear";
+
+    private List<Order> getNotCompletedOrders(List<Order> orders){
+        List<Order> notCompletedOrders = orders.stream().filter(order -> !order.isCompleted()).collect(Collectors.toList());
+        return notCompletedOrders;
+    }
+
+    private void sendEmailToClientAboutBanningShop(List<Order> orders) throws MessagingException {
+        for(Order order : orders){
+            new Email(order.getUserEmail(), EmailSubjects.YOUR_SHOP_IS_BANNED, EmailContents.createYourShopIsBannedEmailContent()).sendEmail();
+        }
+    }
+
+    private void changeProductsStatus(Shop shop, ShopAndProductStatus status){
+        List<Product> products = productRepo.getByShop(shop);
+        for(Product product : products){
+            product.setStatus(status);
+            productRepo.save(product);
+        }
+    }
 
     private boolean isUnauthorized(HttpSession session){
         User user = (User) session.getAttribute(USER);
@@ -332,12 +364,39 @@ public class AdminController {
     }
 
     @GetMapping("deleteAccount")
-    public String deleteAccount(HttpSession session, HttpServletRequest request, Model model){
+    public String deleteAccount(HttpSession session, HttpServletRequest request, Model model) throws IOException, DocumentException, MessagingException {
         if(isUnauthorized(session)){
             return "forbidden";
         }
         long userId = getLongId(request, USER_ID);
         User user = userRepo.getById(userId);
+        if(user.hasShop()){
+            Shop shop = user.getShop();
+            List<Product> products = productRepo.getByShop(shop);
+            List<Order> orders = orderRepo.getByShop(shop);
+            List<Order> ordersNotCompleted = getNotCompletedOrders(orders);
+            if(!ordersNotCompleted.isEmpty()) {
+                String fileName = OrderPdfGenerator.INSTANCE.generateOrderListPdf(ordersNotCompleted);
+                Email email = new Email(user.getEmail(), EmailSubjects.SHOP_DELETED, EmailContents.createShopDeletedEmailContent());
+                email.setAttachment(fileName);
+                email.sendEmail();
+                sendEmailToClientAboutBanningShop(ordersNotCompleted);
+            }else {
+                Email email = new Email(user.getEmail(), EmailSubjects.USER_ACCOUNT_DELETED, EmailContents.createUserAccountDeletedEmailContent());
+                email.sendEmail();
+            }
+            orderRepo.deleteAll(orders);
+            productRepo.deleteAll(products);
+            shop.setUser(null);
+            user.setShop(null);
+            shopRepo.delete(shop);
+        }else{
+            Email email = new Email(user.getEmail(), EmailSubjects.USER_ACCOUNT_DELETED, EmailContents.createUserAccountDeletedEmailContent());
+            email.sendEmail();
+        }
+        BlackListBuilder blackListBuilder = new BlackListBuilder();
+        BlackList blackList = blackListBuilder.buildBlackList(user, Punishment.DELETED);
+        blackListRepo.save(blackList);
         userRepo.delete(user);
         flashMessageManager.setSession(session);
         flashMessageManager.addMessage(MessagesContents.USER_DELETED, INFO);
@@ -374,17 +433,46 @@ public class AdminController {
     }
 
     @GetMapping("saveAccountChanges")
-    public String saveAccountChanges(HttpSession session, HttpServletRequest request, Model model){
+    public String saveAccountChanges(HttpSession session, HttpServletRequest request, Model model) throws MessagingException, IOException, DocumentException {
         if(isUnauthorized(session)){
             return "forbidden";
         }
         long userId = getLongId(request, USER_ID);
         User user = userRepo.getById(userId);
-        Permissions permissions = convertPermissionFromStringToEnum(request.getParameter(PERMISSIONS));
-        user.setPermissions(permissions);
-        userRepo.save(user);
-        flashMessageManager.setSession(session);
-        flashMessageManager.addMessage(MessagesContents.CHANGES_SAVED, INFO);
+        if(user.hasShop()) {
+            Permissions permissions = convertPermissionFromStringToEnum(request.getParameter(PERMISSIONS));
+            user.setPermissions(permissions);
+            Shop shop = user.getShop();
+            if(permissions.equals(Permissions.CLIENT)){
+                shop.setStatus(ShopAndProductStatus.BLOCKED);
+                changeProductsStatus(shop, ShopAndProductStatus.BLOCKED);
+                shopRepo.save(shop);
+                List<Order> orders = orderRepo.getByShop(shop);
+                orders = getNotCompletedOrders(orders);
+                if(!orders.isEmpty()) {
+                    String fileName = OrderPdfGenerator.INSTANCE.generateOrderListPdf(orders);
+                    Email email = new Email(user.getEmail(), EmailSubjects.BAN, EmailContents.createBanEmailContent());
+                    email.setAttachment(fileName);
+                    email.sendEmail();
+                    sendEmailToClientAboutBanningShop(orders);
+                }else {
+                    Email email = new Email(user.getEmail(), EmailSubjects.BAN, EmailContents.createBanNoOrdersEmailContent());
+                    email.sendEmail();
+                }
+                BlackListBuilder blackListBuilder = new BlackListBuilder();
+                BlackList blackList = blackListBuilder.buildBlackList(user, Punishment.BAN);
+                blackListRepo.save(blackList);
+            }else {
+                shop.setStatus(ShopAndProductStatus.ACTIVE);
+                changeProductsStatus(shop, ShopAndProductStatus.ACTIVE);
+                shopRepo.save(shop);
+                Email email = new Email(user.getEmail(), EmailSubjects.BAN_CANCELED, EmailContents.createBanCanceledEmailContent());
+                email.sendEmail();
+            }
+            userRepo.save(user);
+            flashMessageManager.setSession(session);
+            flashMessageManager.addMessage(MessagesContents.CHANGES_SAVED, INFO);
+        }
         model.addAttribute(FLASH_MESSAGE_MANAGER, flashMessageManager);
         return "redirect:/adminPage";
     }

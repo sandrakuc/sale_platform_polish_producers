@@ -18,6 +18,12 @@ public class EmailContents {
     private static final String BUG_IS_REPAIRED = "Witaj!\nDziękujemy za pomoc w usprawnianiu naszego serwisu! Zgłoszona przez Ciebie usterka została właśnie naprawiona! W razie problemów prosimy o dalszy kontakt!\nPozdrawiamy,\nzespół %s\n\nEmail wygenerowany automatycznie, prosimy na niego nie odpowiadać.";
     private static final String START_BUG_REPAIRING = "Witaj!\nDziękujemy za pomoc w usprawnianiu naszego serwisu! Zgłoszona przez Ciebie usterka jest właśnie naprawiana! W razie problemów prosimy o dalszy kontakt!\nPozdrawiamy,\nzespół %s\n\nEmail wygenerowany automatycznie, prosimy na niego nie odpowiadać.";
     private static final String REBUKE = "Witaj!\nDotarły do nas informacje o złamaniu przez Ciebie regulaminu naszego serwisu. To jest pierwsze ostrzeżenie. Następnym razem wyciągniemy poważniejsze konsekwencje.\nProsimy o usunięcie obraźliwej opinii, usunięcie ze sprzedaży niespełniającego zasad produktu, wpłaty zaległej kwoty dla sprzedającego lub zadośćuczynienia kupującemu.\nPozdrawiamy,\nzespół %s\n\nEmail wygenerowany automatycznie, prosimy na niego nie odpowiadać.";
+    private static final String BAN = "Witaj!\nDotarły do nas informacje o złamaniu przez Ciebie regulaminu naszego serwisu. To nie jest pierwsze Twoje wykroczenie. Na jakiś czas wyłączamy Twój dostęp do Twojego sklepu. Zapraszamy do kupowania od innych sprzedawców. Aby przywrócić uprawnienia sprzedawcy prosimy wpłacić kwotę %s na numer konta %s.\nProsimy również uregulować sprawy dotyczące zakupów dokonanych przez kupujących. W załączniku przesłana zostanie lista transakcji oczekujących na sfinalizowanie poza naszym serwisem. W razie problemów z kupującymi, prosimy skontaktować się z nami na nasz adres mailowy: %s.\nPozdrawiamy,\nzespół %s\n\nEmail wygenerowany automatycznie, prosimy na niego nie odpowiadać.";
+    private static final String BAN_NO_ORDERS = "Witaj!\nDotarły do nas informacje o złamaniu przez Ciebie regulaminu naszego serwisu. To nie jest pierwsze Twoje wykroczenie. Na jakiś czas wyłączamy Twój dostęp do Twojego sklepu. Zapraszamy do kupowania od innych sprzedawców. Aby przywrócić uprawnienia sprzedawcy prosimy wpłacić kwotę %s na numer konta %s.\nPozdrawiamy,\nzespół %s\n\nEmail wygenerowany automatycznie, prosimy na niego nie odpowiadać.";
+    private static final String SHOP_DELETED = "Witaj!\nW związku z notorycznym łamaniem regulaminu naszego serwisu Twoje konto zostało usunięte.\nProsimy uregulować sprawy dotyczące zakupów dokonanych przez kupujących. W załączniku przesłana zostanie lista transakcji oczekujących na sfinalizowanie poza naszym serwisem. W razie problemów z kupującymi, prosimy skontaktować się z nami na nasz adres mailowy: %s.\nPozdrawiamy,\nzespół %s\n\nEmail wygenerowany automatycznie, prosimy na niego nie odpowiadać.";
+    private static final String USER_ACCOUNT_DELETED = "Witaj!\nW związku z notorycznym łamaniem regulaminu naszego serwisu Twoje konto zostało usunięte.\nPozdrawiamy,\nzespół %s\n\nEmail wygenerowany automatycznie, prosimy na niego nie odpowiadać.";
+    private static final String BAN_CANCELED = "Witaj!\nOdzyskałeś dostęp do swojego sklepu. Możesz na nowo sprzedawać swoje produkty i dbać o zadowolenie klientów.\nPozdrawiamy,\nzespół %s\n\nEmail wygenerowany automatycznie, prosimy na niego nie odpowiadać.";
+    private static final String YOUR_SHOP_IS_BANNED = "Witaj!\nInformujemy, że sklep, w którym złożyłeś zamówienie został dyscyplinarnie zablokowany lub usunięty. Nie martw się jednak! Zależy nam na zadowoleniu naszych użytkowników! Wysłaliśmy do administartora profilu sklepu zawiadomienie o czekających na sfinalizowanie zamówieniach. Wśród nich jest również Twoje! Zamówienie zostanie sfinalizowane poza naszym systemem. Oczekuj na kontakt ze strony sprzedawcy. W razie problemów skontaktuj się z nami na adres email: %s.\nPozdrawiamy,\nzespół %s\n\nEmail wygenerowany automatycznie, prosimy na niego nie odpowiadać.";
 
     private static String alertTypeToStringConvert(SecurityAlert securityAlert){
         if(securityAlert.isOffensiveOpinionSecurityAlert()) return "obraźliwej opinii";
@@ -63,5 +69,29 @@ public class EmailContents {
 
     public static String createRebukeEmailContent(){
         return String.format(REBUKE, EmailVariables.OUR_COMPANY_NAME);
+    }
+
+    public static String createBanEmailContent(){
+        return String.format(BAN, EmailVariables.PAYMENT_FOR_ACCOUNT, EmailVariables.OUR_ACCOUNT_EMAIL, EmailVariables.OUR_EMAIL, EmailVariables.OUR_COMPANY_NAME);
+    }
+
+    public static String createBanNoOrdersEmailContent(){
+        return String.format(BAN_NO_ORDERS, EmailVariables.PAYMENT_FOR_ACCOUNT, EmailVariables.OUR_ACCOUNT_EMAIL, EmailVariables.OUR_COMPANY_NAME);
+    }
+
+    public static String createBanCanceledEmailContent(){
+        return String.format(BAN_CANCELED, EmailVariables.OUR_COMPANY_NAME);
+    }
+
+    public static String createYourShopIsBannedEmailContent(){
+        return String.format(YOUR_SHOP_IS_BANNED, EmailVariables.OUR_EMAIL, EmailVariables.OUR_COMPANY_NAME);
+    }
+
+    public static String createShopDeletedEmailContent(){
+        return String.format(SHOP_DELETED, EmailVariables.OUR_EMAIL, EmailVariables.OUR_COMPANY_NAME);
+    }
+
+    public static String createUserAccountDeletedEmailContent(){
+        return String.format(USER_ACCOUNT_DELETED, EmailVariables.OUR_COMPANY_NAME);
     }
 }

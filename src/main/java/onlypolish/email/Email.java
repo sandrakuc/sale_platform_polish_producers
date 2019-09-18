@@ -1,6 +1,9 @@
 package onlypolish.email;
 
 import java.util.*;
+import javax.activation.DataHandler;
+import javax.activation.DataSource;
+import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.*;
 
@@ -13,6 +16,8 @@ public class Email {
     private String subject;
 
     private String content;
+
+    private String attachment;
 
     public Email(String recipientEmail, String subject, String content){
         this.recipientEmail = recipientEmail;
@@ -42,15 +47,30 @@ public class Email {
         return session;
     }
 
+    public void setAttachment(String attachment){
+        this.attachment = attachment;
+    }
+
     public void sendEmail() throws MessagingException {
         Session session = getSession();
         MimeMessage message = new MimeMessage(session);
         message.setFrom(new InternetAddress(EmailVariables.OUR_EMAIL));
         message.addRecipient(Message.RecipientType.TO, new InternetAddress(recipientEmail));
         message.setSubject(subject);
-        message.setText(content);
+        BodyPart messageBodyPart = new MimeBodyPart();
+        messageBodyPart.setText(content);
+        Multipart multipart = new MimeMultipart();
+        multipart.addBodyPart(messageBodyPart);
+        if(attachment != null){
+            messageBodyPart = new MimeBodyPart();
+            String filename = attachment;
+            DataSource source = new FileDataSource(filename);
+            messageBodyPart.setDataHandler(new DataHandler(source));
+            messageBodyPart.setFileName(filename);
+            multipart.addBodyPart(messageBodyPart);
+        }
+        message.setContent(multipart);
         message.saveChanges();
-
         Transport.send(message);
     }
 }

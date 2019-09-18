@@ -27,4 +27,16 @@ public class DeliveryWay {
 
     @DecimalMin(value = "0.01", inclusive = true)
     private double price;
+
+    public boolean isPocztaPolska(){
+        return DeliveryCompany.POCZTA_POLSKA.equals(deliveryCompany);
+    }
+
+    public boolean isInpost(){
+        return DeliveryCompany.INPOST.equals(deliveryCompany);
+    }
+
+    public boolean isDpd(){
+        return DeliveryCompany.DPD.equals(deliveryCompany);
+    }
 }

@@ -89,13 +89,13 @@
             <td th:text="${user.getName()}"></td>
             <td th:text="${user.getSurname()}"></td>
             <form method="get" action="saveAccountChanges">
-            <td><select id="perm1" class="form-control" name="perms">
+            <td><select id="perm1" class="form-control" name="perms" th:disabled="${!user.hasShop()}">
                 <option th:selected="${user.isSeller()}" value="SELLER">SPRZEDAJĄCY</option>
                 <option th:selected="${user.isClient()}" value="CLIENT">KUPUJĄCY</option>
             </select></td>
             <td>
                 <input type="hidden" name="userId" th:value="${user.getId()}" />
-                <button class="btn btn-primary" type="submit">ZAPISZ</button>
+                <button class="btn btn-primary" type="submit" th:disabled="${!user.hasShop()}">ZAPISZ</button>
             </td></form>
             <td><form method="get" action="deleteAccount">
                 <input type="hidden" name="userId" th:value="${user.getId()}" />

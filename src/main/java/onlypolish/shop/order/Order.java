@@ -29,6 +29,9 @@ public class Order {
     @ManyToOne
     private Shop shop;
 
+    @Size(min=6)
+    private String orderNumber;
+
     @DecimalMin(value = "0.01", inclusive = true)
     private double totalPrice;
 
@@ -82,5 +85,29 @@ public class Order {
 
     @Enumerated(EnumType.STRING)
     private OrderSatus satus;
+
+    public boolean isPlaced(){
+        return OrderSatus.PLACED.equals(satus);
+    }
+
+    public boolean isPaid(){
+        return OrderSatus.PAID.equals(satus);
+    }
+
+    public boolean isCompleted(){
+        return OrderSatus.COMPLETED.equals(satus);
+    }
+
+    public boolean isPayUPayment(){
+        return PaymentWay.PAYU.equals(paymentWay);
+    }
+
+    public boolean isCardPayment(){
+        return PaymentWay.CARD.equals(paymentWay);
+    }
+
+    public boolean isOnDeliveryPayment(){
+        return PaymentWay.ONDELIVERY.equals(paymentWay);
+    }
 
 }

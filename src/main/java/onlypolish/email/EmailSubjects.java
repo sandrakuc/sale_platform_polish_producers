@@ -13,4 +13,9 @@ public class EmailSubjects {
     public static final String BUG_IS_REPAIRED = "Zgłoszona przez Ciebie usterka została naprawiona!";
     public static final String START_BUG_REPAIRING = "Praca nad zgłoszoną przez Ciebie usterką rozpoczęta!";
     public static final String REBUKE = "Upomnienie";
+    public static final String BAN = "Dostęp do sklepu utracony do odwołania";
+    public static final String BAN_CANCELED = "Dostęp do sklepu odzyskany";
+    public static final String YOUR_SHOP_IS_BANNED = "Twoje zamówienie zostanie zrealizowane poza systemem.";
+    public static final String SHOP_DELETED = "Twoje konto użytkownika zostało usunięte.";
+    public static final String USER_ACCOUNT_DELETED = "Konto użytkownika zostało usunięte.";
 }
