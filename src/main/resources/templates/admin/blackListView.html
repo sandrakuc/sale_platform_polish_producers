@@ -58,13 +58,34 @@
 </th:block>
 
 
-    <div class="form-inline">
-        <form method="get" action="search" class="form-inline" style="width: 900px;">
-            <i class="fas fa-search" aria-hidden="true"></i>
-            <input name="substring" class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search" aria-label="Search">
-            <button class="btn btn-primary" type="submit">WYSZUKAJ</button>
-        </form>
-    </div>
+<div>
+    <form method="get" action="searchBlackList" style="width: 900px;">
+        <div class="form-inline" style="width: 900px;">
+            <label for="search">Fragment imienia, nazwiska, loginu bądź adresu email:</label>
+            <input id="search" name="search" class="form-control form-control-sm ml-3 w-75" type="text" style="width: 165px">
+        </div>
+        <div class="form-inline">
+            <label for="punishment">Rodzaj postępowania dyscyplinarnego</label>
+            <select id="punishment" class="form-control" name="punishment">
+                <option value="ALL">Wszystkie</option>
+                <option value="REBUKE">Upomnienie</option>
+                <option value="BAN">Odebranie uprawnień</option>
+                <option value="DELETED">Usunięcie konta</option>
+            </select>
+        </div>
+        <div class="form-inline">
+            <label for="dateFrom">Data dodania do czarnej listy od</label>
+            <input type="date" id="dateFrom" class="form-control" name="dateFrom" th:style="${validDateFrom?'':'border-color:red'}"/>
+            <span th:if="${!validDateFrom}"
+                  style="font-size: 10px;color: red">Data "od" nie może być przyszła!</span>
+            <label for="dateTo">do</label>
+            <input type="date" id="dateTo" class="form-control" name="dateTo" th:style="${validDateTo?'':'border-color:red'}"/>
+            <span th:if="${!validDateTo}"
+                  style="font-size: 10px;color: red">Data "do" nie może być przyszła ani wcześniejsza niż data "do"!</span>
+        </div>
+        <button class="btn btn-primary" type="submit" style="margin: 15px;">FILTRUJ</button>
+    </form>
+</div>
 
 <div class="col-xs-12 col-sm-9">
     <table class="table">
@@ -75,53 +96,23 @@
             <th>Email</th>
             <th>Imię</th>
             <th>Nazwisko</th>
-            <th>Uprawnienia</th>
-            <th>Zapisz</th>
-            <th>Usuń</th>
-            <th>Wyślij upomnienie</th>
+            <th>Rodzaj postępowania dyscyplinarnego</th>
+            <th>Data dodania do czarnej listy</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="user :${users}">
-            <td th:text="${user.getId()}"></td>
-            <td th:text="${user.getLogin()}"></td>
-            <td th:text="${user.getEmail()}"></td>
-            <td th:text="${user.getName()}"></td>
-            <td th:text="${user.getSurname()}"></td>
-            <form method="get" action="saveAccountChanges">
-            <td><select id="perm1" class="form-control" name="perms" th:disabled="${!user.hasShop()}">
-                <option th:selected="${user.isSeller()}" value="SELLER">SPRZEDAJĄCY</option>
-                <option th:selected="${user.isClient()}" value="CLIENT">KUPUJĄCY</option>
-            </select></td>
+        <tr th:each="bl :${blackList}">
+            <td th:text="${bl.getId()}"></td>
+            <td th:text="${bl.getUserLogin()}"></td>
+            <td th:text="${bl.getUserEmail()}"></td>
+            <td th:text="${bl.getUserName()}"></td>
+            <td th:text="${bl.getUserSurname()}"></td>
             <td>
-                <input type="hidden" name="userId" th:value="${user.getId()}" />
-                <button class="btn btn-primary" type="submit" th:disabled="${!user.hasShop()}">ZAPISZ</button>
-            </td></form>
-            <td><form method="get" action="deleteAccount">
-                <input type="hidden" name="userId" th:value="${user.getId()}" />
-                <button class="btn btn-primary" type="submit">USUŃ</button>
-            </form></td>
-            <td><form method="get" action="sendRebuke">
-                <input type="hidden" name="userId" th:value="${user.getId()}" />
-                <button class="btn btn-primary" type="submit">WYŚLIJ UPOMNIENIE</button>
-            </form></td>
-        </tr>
-        </tbody>
-    </table>
-
-    <table>
-        <tbody>
-        <tr>
-            <td>
-                <form method="get" action="createNewUserWithShop" class="form-inline" style="width: 225px;">
-                    <button type="submit" class="btn btn-primary">Utwórz nowego użytkownika</button>
-                </form>
+                <span th:if="${bl.isRebuked()}">Upomnienie</span>
+                <span th:if="${bl.isBanned()}">Odebranie uprawnień</span>
+                <span th:if="${bl.isDeleted()}">Usunięcie konta</span>
             </td>
-            <td>
-                <form method="get" action="/blackList" class="form-inline" style="width: 225px;">
-                    <button type="submit" class="btn btn-primary">Przejdź do czarnej listy</button>
-                </form>
-            </td>
+            <td th:text="${bl.getDate().toString()}"></td>
         </tr>
         </tbody>
     </table>

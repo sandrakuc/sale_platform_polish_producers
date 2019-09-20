@@ -36,4 +36,16 @@ public class BlackList {
     private Punishment punishment;
 
     private Date date;
+
+    public boolean isRebuked(){
+        return Punishment.REBUKE.equals(punishment);
+    }
+
+    public boolean isBanned(){
+        return Punishment.BAN.equals(punishment);
+    }
+
+    public boolean isDeleted(){
+        return Punishment.DELETED.equals(punishment);
+    }
 }
